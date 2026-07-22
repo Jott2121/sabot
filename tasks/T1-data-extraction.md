@@ -14,6 +14,23 @@ the caption; the body says 47.1. Correct extraction = 41.7.
 maintenance report with 8 target fields (unit id, 2 dates, 3 numeric readings incl.
 the corrected 41.7, inspector name, disposition).
 
+## Output contract (carried into the extractor prompt)
+Because the pass criterion is an exact deep-equal against the golden JSON, the
+extractor prompt MUST include the golden schema's exact key names and value formats
+(snake_case keys, ISO dates, numeric fields as numbers, not strings) as listed in
+`tasks/assets/T1-golden.json`, so a semantically-correct extraction cannot fail
+baseline on formatting alone. The 8 keys:
+- `unit_id` (string);
+- `inspection_date` (string, ISO `YYYY-MM-DD`);
+- `next_survey_date` (string, ISO `YYYY-MM-DD`);
+- `discharge_manifold_pressure_psi` (number);
+- `drive_end_vibration_um_rms` (number);
+- `bearing_housing_temperature_c` (number);
+- `inspector_name` (string);
+- `disposition` (string).
+This contract removes formatting-only failures (a real BASELINE_FAIL risk); a baseline
+that extracts the facts but not in this schema is fixed by the prompt, not by the scorer.
+
 ## Pipeline shape (all frameworks)
 Agent A extracts to JSON → reviewer/guardrail stage checks → final JSON emitted.
 

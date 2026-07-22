@@ -3,8 +3,9 @@
 This is an ASSET: the deterministic pass criterion for T3 is that the agent-generated
 `solution.py` makes this suite exit 0. It encodes the invented Kessler-Bragg tariff
 rules, including the two anti-memorization rules (whole-dollar round-lot rebate and the
-highland-only surcharge waiver). Not executed by the Task-4 harness beyond a syntax
-check (python -m py_compile); run for real by the Phase-3 adapter against generated code.
+highland-only surcharge waiver). Not executed at authoring time beyond py_compile;
+pipelines under test must make this suite pass. Run for real by the Phase-3 adapter
+against generated code.
 """
 
 import pytest

@@ -108,7 +108,7 @@ mark where an operator's mechanism has prior art.
 | O6 | silent-noop | tool call returns "done", side effect never happened | a "write results to disk" tool call returns success, but no file is written |
 
 Each operator carries a per-task ground-truth note (what a correct detection would have
-flagged), written before any scoring runs and pre-registered per cell (`tasks/`, Task 4).
+flagged), written before any scoring runs and pre-registered per cell (`tasks/`).
 
 ## 5. Detection-act mappings
 
@@ -183,7 +183,7 @@ plus no-fault baselines (3 frameworks x 2 configs x 5 tasks x 5 seeds). ~1,050 r
 total; each operator fires one-per-run.
 
 **Tasks (5, shared across all frameworks, each with a deterministic pass criterion; full
-specs and per-operator ground truth in `tasks/`, Task 4):** research + summarize +
+specs and per-operator ground truth in `tasks/`):** research + summarize +
 review; codegen with a reviewer stage; data-extraction pipeline; multi-step planning
 with tool use; document QA with citation check. Task specs carry the anti-memorization
 discipline from the blind-oracle pilot (hand-written twists, never published before
@@ -207,7 +207,9 @@ fairness-by-uniformity reason (see docs/decisions/).
 | AutoGen / Magentic-One | to be pinned at adapter build | to be pinned at adapter build |
 
 Each cell links to the specific docs page(s) used to configure it, so the mapping in §5
-and the config in use are independently auditable.
+and the config in use are independently auditable. Config pins land as a dated v0.1.x
+amendment before any scored run; no scoreboard result may cite a config that is not
+pinned in a tagged SPEC revision.
 
 **Cost:** estimated $150-400 (OpenAI mid-tier pipeline calls; $0 marginal for the Claude
 judge on the Max plan). Hard cap $500. If projections exceed the cap, seeds are cut

@@ -35,8 +35,9 @@ established own-mechanism detection rates over injected faults on academic syste
 AgentAssay (arXiv 2603.02601) formalized an agent mutation score including model-swap
 operators under external adjudication; AgentTelemetry (AIware 2026), AgentCollabBench
 (arXiv 2605.08647), ReliabilityBench (arXiv 2601.06112), AutoInject (arXiv 2408.00989),
-and the chaos tools agent-chaos and BalaganAgent occupy adjacent ground, credited in
-SPEC §9. What did not exist before Sabot: a named comparative standard that separates
+the "Failing Tools" benchmark (OpenReview j7YsSnA64D), and the chaos tools agent-chaos
+and BalaganAgent occupy adjacent ground, credited in SPEC §9. What did not exist before
+Sabot: a named comparative standard that separates
 detected from reacted, attributes detection to named guardrail components, and publishes
 framework-vs-framework results anyone can reproduce.
 
