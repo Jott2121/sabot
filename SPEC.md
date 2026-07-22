@@ -192,12 +192,11 @@ this repo).
 **Seeds:** 5 per cell, pre-registered per cell before any run, published with results.
 No seed changes after registration.
 
-**Temperature:** pinned to a single fixed value, uniform across every pipeline-model
-call, in every framework, task, and config. Recorded together with the pipeline model
-id at the metric freeze (below) — both are frozen at the same moment for the same
-fairness-by-uniformity reason.
+**Temperature:** 0, uniform across every pipeline-model call, in every framework, task,
+and config. Frozen together with the pipeline model id at the same moment, for the same
+fairness-by-uniformity reason (see docs/decisions/).
 
-**Pipeline model:** RECORDED AT FREEZE (see docs/decisions/)
+**Pipeline model:** `gpt-5.6-terra`, temperature 0 (see docs/decisions/)
 
 **Configs:** both configs are defined per framework —
 
