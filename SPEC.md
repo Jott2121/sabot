@@ -1,8 +1,8 @@
 # Sabot — Specification v0.1.2 (2026-07-22)
 
-*Base v0.1 frozen 2026-07-22; amended to v0.1.1 the same day — pre-data adapter-build
-amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is unchanged.
-See the Amendment log at the end of this document.*
+*Base v0.1 frozen 2026-07-22; amended to v0.1.1 then v0.1.2 the same day — pre-data
+adapter-build amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is
+unchanged. See the Amendment log at the end of this document.*
 
 This is the frozen standard. Once published in the day-1 public stake it does not change
 in substance for the sprint; amendments after reveal are versioned (v0.2, ...) and dated.
