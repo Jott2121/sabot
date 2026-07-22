@@ -22,6 +22,8 @@ bands: [SPEC.md](SPEC.md).
 
 ## Status
 
+- `seeds/` — pre-registered per-wave seeds (SPEC §8): committed before any scored run,
+  published with results.
 - **2026-07-22:** SPEC v0.1 published. First scoreboard (LangGraph, CrewAI,
   AutoGen/Magentic-One) in progress; harness and raw traces publish here with the
   results. Interpretation bands are pre-registered in SPEC §7 *before* any data exists,

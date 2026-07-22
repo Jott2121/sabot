@@ -1,0 +1,7 @@
+{
+  "registered": "2026-07-22",
+  "spec_version": "v0.1.2",
+  "wave": 1,
+  "rule": "Uniform seeds for every wave-1 cell, registered before any scored run (SPEC section 8) and never changed after registration. Seeds are repetition identifiers recorded per run; the pipeline model runs at its default temperature (SPEC v0.1.1), so repetitions sample real run-to-run variance. Seed 1 is deliberately excluded: the Phase-3 pilot/smoke runs used it, and those five cells are anecdotes outside the scored dataset.",
+  "seeds": [11, 12, 13, 14, 15]
+}
