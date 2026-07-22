@@ -22,17 +22,32 @@ $500 cap.
 
 ## Candidates (prices exactly as the pricing page states them, per 1M tokens)
 
-| model | page-stated tier | input | cached input | output |
-|---|---|---|---|---|
-| `gpt-5.6-terra` | "Mid-tier" (models page: "Balances intelligence with cost-effectiveness") | $2.50 | $0.25 | $15.00 |
-| `gpt-5.6-luna` | "Cost-optimized" (models page: "Optimized for cost-sensitive workloads") | $1.00 | $0.10 | $6.00 |
-| `gpt-5.4-mini` | "Mid-Tier & Compact" (pricing page), branded "mini" (models page lists it only as a compact/legacy-generation SKU) | $0.75 | $0.075 | $4.50 |
+Correction (post-review): an earlier draft of this doc quoted invented tier
+labels ("Mid-tier", "Mid-Tier & Compact") that do not appear on either page.
+Re-fetched both pages verbatim below; the models page lists Sol/Terra/Luna
+under one single umbrella heading, **"Frontier models"** — there is no
+per-model tier label at all, only a one-line description per model. The
+pricing page likewise lists every model (Sol, Terra, Luna, gpt-5.4-mini,
+gpt-5.5, gpt-5.4, the `-pro` SKUs, etc.) under one single heading,
+**"Flagship models"** — that heading is not a tier distinction either, it is
+the page's label for its base (non-batch/flex/priority) rate table covering
+every model. `gpt-5.4-mini` does not appear on the models page's current
+"Frontier models" lineup at all (Sol/Terra/Luna only); it exists only as a
+row in the pricing page's table.
 
-(Flagship-tier models — `gpt-5.6-sol` $5.00/$30.00, `gpt-5.5` $5.00/$30.00,
-`gpt-5.4` $2.50/$15.00, the `-pro` SKUs at $30.00/$180.00 — were read and
-rejected outright: nothing in the brief calls for flagship reasoning-grade
-capability, and several of these cost 2-12x the mid-tier candidates above for
-no stated agent-stack advantage.)
+| model | page's verbatim per-model description | input | cached input | output |
+|---|---|---|---|---|
+| `gpt-5.6-terra` | "GPT-5.6 model that balances intelligence and cost" (models page, under "Frontier models") | $2.50 | $0.25 | $15.00 |
+| `gpt-5.6-luna` | "GPT-5.6 model optimized for cost-sensitive workloads" (models page, under "Frontier models") | $1.00 | $0.10 | $6.00 |
+| `gpt-5.4-mini` | not present on the models page's current lineup; appears only as a pricing-table row under the pricing page's single "Flagship models" heading (previous-generation "mini" SKU) | $0.75 | $0.075 | $4.50 |
+
+For reference, `gpt-5.6-sol` — the third model under the same "Frontier
+models" heading — is described as "Frontier model for complex professional
+work" and priced at $5.00/$30.00. Flagship-priced models `gpt-5.5` ($5.00/
+$30.00), `gpt-5.4` ($2.50/$15.00), and the `-pro` SKUs ($30.00/$180.00) were
+read and rejected outright: nothing in the brief calls for flagship
+reasoning-grade capability, and several of these cost 2-12x the candidates
+above for no stated agent-stack advantage.
 
 ## Cost arithmetic
 
@@ -68,14 +83,20 @@ is decided by the capability/credibility half.
 
 **Why it satisfies both halves of the selection rule:**
 
-- **Capability/credibility half:** `gpt-5.6-terra` is the only candidate the
-  models page itself labels **"Mid-tier"** as a first-class tier, current
-  generation (5.6, not the superseded 5.4 line), described as balancing
-  intelligence with cost — i.e., the general-purpose model OpenAI's own docs
-  position for production use, not a mini/nano/cost-optimized trim. Pinning a
-  model explicitly branded "mini" (`gpt-5.4-mini`) or "cost-optimized"
-  (`gpt-5.6-luna`) invites the "you handicapped the pipeline" objection this
-  rule exists to pre-empt; `gpt-5.6-terra` does not.
+- **Capability/credibility half:** neither page assigns formal tiers, so this
+  reads from the real per-model descriptions and the price ladder instead.
+  Among the three current-generation "Frontier models," `gpt-5.6-terra` sits
+  in the middle of the price ladder ($2.50/$15.00 — below Sol's $5.00/$30.00
+  "frontier model for complex professional work," above Luna's $1.00/$6.00),
+  and its own description is explicitly the balanced general-purpose one,
+  "GPT-5.6 model that balances intelligence and cost" — not a capability
+  trade-off in either direction. Luna's description commits the opposite way
+  ("optimized for cost-sensitive workloads" — a budget trim, current
+  generation but explicitly cost-first) and `gpt-5.4-mini` is a previous-
+  generation "mini" SKU that isn't even part of the current frontier lineup.
+  Pinning either invites the "you handicapped the pipeline" objection this
+  rule exists to pre-empt; `gpt-5.6-terra`'s own stated description and its
+  mid-ladder price do not.
 - **Cost half:** $262.50 for the full ~1,050-run matrix, well inside the $500
   cap, leaving roughly $237 of headroom for judge-side overhead (though the
   cross-lineage judge itself is $0 marginal on the Claude Max plan, §6),
