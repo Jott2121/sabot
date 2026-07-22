@@ -58,8 +58,8 @@ Sabot Score = |DETECTED_HARD| / |valid injected faults|
 ```
 
 **Companion published numbers** (never blended into the headline): soft-tier notice
-rate (`|DETECTED_HARD ∪ DETECTED_SOFT| / |valid|`), reaction rate (`|REACTED| /
-|valid|`), recovery rate (`|RECOVERED| / |valid|`), and:
+rate — any notice at all, hard or soft (`|DETECTED_HARD ∪ DETECTED_SOFT| / |valid|`) —
+reaction rate (`|REACTED| / |valid|`), recovery rate (`|RECOVERED| / |valid|`), and:
 
 ```
 override gap = soft-tier notice rate − hard-tier detection rate
@@ -221,14 +221,16 @@ model-swap operator. The standing honesty rule (non-negotiable, every public art
 position Sabot as a synthesis measured comparatively at production scale, citing
 MAS-FIRE and AgentAssay squarely — never claim invention of any of the above.
 
-- **MAS-FIRE** (arXiv 2602.19843) — measures an occurrence rate (O_f), a
-  detection-and-reaction rate over 15 injected fault types where the detector is the
-  system's own mechanisms, on three academic multi-agent systems (MetaGPT, Table-Critic,
-  Camel). Sabot differs by separating detected from reacted (O_f bundles them), by
-  attributing detection to named guardrail components (MAS-FIRE's four tiers carry no
-  per-component attribution), by adding no-act "noticed" as its own tier, and by
-  targeting production frameworks with published comparative results rather than
-  academic systems in isolation.
+- **MAS-FIRE** (arXiv 2602.19843) — defines its own **Occurrence Rate (O_f)**
+  ("quantifies the system's ability to detect anomalies and activate fault-tolerant
+  responses," O_f = N_f,trigger / N_total), a detection-and-reaction rate over 15
+  injected fault types where the detector is the system's own mechanisms, on three
+  academic multi-agent systems (MetaGPT, Table-Critic, CAMEL). Sabot differs by
+  separating detected from reacted (O_f bundles them), by attributing detection to
+  named guardrail components (MAS-FIRE's four tiers carry no per-component
+  attribution), by adding no-act "noticed" as its own tier, and by targeting
+  production frameworks with published comparative results rather than academic
+  systems in isolation.
 - **AgentAssay** (arXiv 2603.02601) — formalizes an agent mutation score (stochastic
   verdicts, kill criteria) including model-swap (`m_swap`) and version-downgrade
   (`m_version`) operators, with kill adjudication by an external harness. Sabot differs
@@ -243,10 +245,12 @@ MAS-FIRE and AgentAssay squarely — never claim invention of any of the above.
   mechanism, credited above). Sabot differs by scoring whether propagation is caught by
   the pipeline's own checks, not only how far a fault propagates, and by publishing
   per-framework detection-act mappings.
-- **ReliabilityBench** (arXiv 2601.06112) — benchmarks agent-system reliability under
-  injected faults. Sabot differs by isolating and headlining own-mechanism detection
-  specifically (hard-tier acts against a published per-framework mapping), rather than
-  a general reliability score.
+- **ReliabilityBench** (arXiv 2601.06112) — benchmarks LLM agent reliability under
+  production-like stress: consistency under repeated execution, robustness to
+  semantically equivalent task perturbations, and fault tolerance under controlled
+  tool/API failures, combined into a unified reliability surface. Sabot differs by
+  isolating and headlining own-mechanism detection specifically (hard-tier acts
+  against a published per-framework mapping), rather than a general reliability score.
 - **agent-chaos** — a chaos-engineering tool for agent pipelines, including tool-result
   mutation (`tool_mutate`, the source for Sabot's O1 tool-lie mechanism, credited above).
   Sabot differs by adding a scored detection funnel (DETECTED/REACTED/RECOVERED) and a
@@ -257,14 +261,20 @@ MAS-FIRE and AgentAssay squarely — never claim invention of any of the above.
 - **Owotogbe proposal** (arXiv 2505.03096) — a proposal-stage paper on fault-injection
   mechanics for agent pipelines. Sabot differs by being a runnable, frozen, comparative
   standard with a published harness and scoreboard, not a proposal.
-- **"Failing Tools" benchmark** (OpenReview j7YsSnA64D) — scores single-agent fault
-  detection in a harness (the source for Sabot's O2 false-success mechanism, credited
-  above). Sabot differs by targeting multi-agent production pipelines with
-  per-component attribution and a cross-framework scoreboard, not single-agent
-  tool-failure detection.
-- **AutoInject** (arXiv 2408.00989) — measures accuracy-recovery after injected faults
-  (its well-known 96.4% figure is accuracy-loss recovery, not detection). Sabot differs
-  by measuring detection directly (whether an own-check fired), never inferring it from
+- **"Failing Tools: Benchmarking LLM Agent Recovery Under Runtime Tool Failures"**
+  (OpenReview j7YsSnA64D) — injects runtime tool failures (including silent no-ops,
+  the source for Sabot's O2 false-success mechanism, credited above) into multi-turn
+  tool-calling scenarios and scores whether the agent detects the failure,
+  distinguishes transient from permanent faults, retries or falls back, and verifies
+  state. Sabot differs by targeting multi-agent production pipelines with
+  per-component attribution and a cross-framework scoreboard, not one agent's
+  tool-failure recovery in isolation.
+- **AutoInject** (arXiv 2408.00989, from "On the Resilience of LLM-Based Multi-Agent
+  Collaboration with Faulty Agents") — a mistake-injection method for agent messages
+  (paired in the same paper with a second method, AutoTransform); a separate
+  "Inspector" review-agent introduced there recovers up to 96.4% of the errors faulty
+  agents make — an end-task recovery figure, not a detection rate. Sabot differs by
+  measuring detection directly (whether an own-check fired), never inferring it from
   recovered accuracy — see recovery-without-detection (§2), which exists precisely to
   keep these two numbers separate.
 
