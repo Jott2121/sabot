@@ -41,6 +41,17 @@ Sabot: a named comparative standard that separates
 detected from reacted, attributes detection to named guardrail components, and publishes
 framework-vs-framework results anyone can reproduce.
 
+## Using the name, citing the work
+
+- A number may be called a **Sabot Score** only if it was produced by a tagged SPEC
+  revision, at that revision's pinned versions and configs, with the pre-registered
+  seeds published in this repository. Anything else is "derived from Sabot" — say so.
+- The canonical scoreboard lives in this repository. Maintainer disputes over mappings
+  are adjudicated publicly here (SPEC §5).
+- Cite via `CITATION.cff` (GitHub's "Cite this repository" button). Spec, docs, and
+  results are CC BY 4.0 — attribution is required, not optional. Harness code
+  publishes under Apache-2.0 with the results.
+
 ## Author
 
 Jeff Otterson — [The Oracle Gate](https://github.com/Jott2121/oracle-gate) ·

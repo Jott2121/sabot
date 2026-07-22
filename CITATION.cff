@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use Sabot — the specification, the harness, or published Sabot Score results — please cite it as below."
+title: "Sabot: an own-checks fault-detection standard for multi-agent frameworks"
+authors:
+  - family-names: Otterson
+    given-names: Jeff
+repository-code: "https://github.com/Jott2121/sabot"
+url: "https://github.com/Jott2121/sabot"
+license: CC-BY-4.0
+version: v0.1.2
+date-released: "2026-07-22"
+keywords:
+  - multi-agent systems
+  - fault injection
+  - agent evaluation
+  - guardrails
+  - benchmark
