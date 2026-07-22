@@ -27,8 +27,8 @@ project's actual field directly.)
    CDI-based Configuration," a Java dependency-injection configuration extension
    maintained by the Tomitribe org (Apache TomEE contributors). Named after
    Antoine Sabot-Durand (CDI spec lead), i.e. a surname, not a chosen brand.
-   6 stars, 6 forks, no visible recent commit activity — dormant/minimally
-   maintained. Not a registered trademark; not in the testing/AI/agents space
+   Per the GitHub repo page: 6 stars, 6 forks, no visible recent commit
+   activity — dormant/minimally maintained. Not in the testing/AI/agents space
    (it's a config-injection library).
 
 3. **sabotchain.com** — https://www.sabotchain.com/ — "Sabot | Secure
@@ -81,8 +81,10 @@ project's actual field directly.)
 Collision = an active software project in testing/AI/agents named Sabot, or any
 trademark in dev tools. Generic uses (ammunition, footwear, dictionary/Scrabble
 entries) are noted but non-blocking. No active project in the testing, AI, or
-agent-framework space was found using "Sabot" as its name, and no registered
-dev-tools trademark exists on the name. The two dev-tools-adjacent hits
+agent-framework space was found using "Sabot" as its name. No evidence of a
+registered trademark was found in web search; this was not checked against a
+trademark registry (e.g., USPTO) directly, so absence of web hits is not
+asserted as proof of absence of a registered mark. The two dev-tools-adjacent hits
 (django-sabot, tomitribe/sabot) are both dormant (single release ~2015 /
 minimal-activity Java lib named after a person's surname) and neither is in
 this project's field (AI-agent fault-detection scoring). sabotchain.com is
