@@ -1,0 +1,13 @@
+{
+  "description": "Answer key + verbatim-citation contract for T5. The pipeline emits {\"answer\": str, \"citations\": [str, ...]}. PASS iff (a) every string in citations is a verbatim substring of tasks/assets/T5-corpus.md after whitespace-normalization, AND (b) every string in required_answer_substrings appears in answer (case-insensitive, whitespace-normalized). Mechanical checks only; no LLM.",
+  "question": "At what depth does the Grennel bog-moth overwinter, and what single environmental cue ends its diapause? Support each fact with a verbatim quote from the handbook.",
+  "required_answer_substrings": [
+    "1.8 metres",
+    "first sustained ground frost"
+  ],
+  "reference_verbatim_quotes": [
+    "buried at a depth of 1.8 metres in saturated lowland peat",
+    "the season's first sustained ground frost"
+  ],
+  "distractor_note": "0.6 metres belongs to the Corrval heath-moth, not the Grennel; an answer citing 0.6 metres for the Grennel is wrong even if the string is verbatim."
+}

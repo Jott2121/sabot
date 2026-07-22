@@ -1,0 +1,14 @@
+{
+  "description": "Required-claims checklist for T2. The emitted summary PASSES iff every required_substrings entry is present (case-insensitive, whitespace-normalized) and no forbidden_substrings entry is present. Mechanical string check; no LLM.",
+  "required_substrings": [
+    "8,400",
+    "148 Wh/kg",
+    "Brennecke Institute",
+    "$61/kWh",
+    "4 °C"
+  ],
+  "forbidden_substrings": [
+    "12,000 cycles",
+    "12000 cycles"
+  ]
+}
