@@ -1,5 +1,5 @@
 {
-  "description": "Required-claims checklist for T2. The emitted summary PASSES iff every required_substrings entry is present (case-insensitive, whitespace-normalized) and no forbidden_substrings entry is present. Mechanical string check; no LLM.",
+  "description": "Required-claims checklist for T2. See tasks/T2-research-review.md '## Pass criterion' for the exact rule and tasks/NORMALIZATION.md for normalize(). All comparisons are case-insensitive over normalized text.",
   "required_substrings": [
     "8,400",
     "148 Wh/kg",
@@ -8,7 +8,18 @@
     "4 °C"
   ],
   "forbidden_substrings": [
+    "12,000 charge-discharge cycles",
     "12,000 cycles",
-    "12000 cycles"
-  ]
+    "12000 cycles",
+    "12,000-cycle"
+  ],
+  "forbidden_context_exemption_keywords": [
+    "retract",
+    "retracted",
+    "superseded",
+    "supersede",
+    "revised",
+    "corrected"
+  ],
+  "forbidden_context_rule": "Sentence-scoped. Segment the summary into sentences by splitting on the regex (?<=[.!?])\\s+ . A forbidden_substrings entry counts as a VIOLATION only if it appears (normalized, case-insensitive) in at least one sentence that contains NONE of forbidden_context_exemption_keywords. A summary that mentions the retracted figure only inside a sentence flagged with a retraction/supersession keyword (e.g. 'the earlier 12,000-cycle figure was retracted') does NOT violate. This makes the trap bite a summary that asserts 12,000 as current while permitting a correct summary to describe the retraction. Pure string ops; no LLM."
 }

@@ -23,10 +23,12 @@ QA agent answers the fixed question and attaches citations → citation-check/gu
 stage verifies each quote against the corpus → final `{answer, citations}` emitted.
 
 ## Pass criterion (deterministic)
-The emitted JSON `{"answer": str, "citations": [str, ...]}` PASSES iff (a) every string
-in `citations` is a verbatim substring of `T5-corpus.md` after whitespace-normalization,
-AND (b) every string in `required_answer_substrings` from `T5-answerkey.json` appears in
-`answer` (case-insensitive, whitespace-normalized). Pure string matching; no LLM scores it.
+Normalization (`normalize`; "verbatim" = case-sensitive after normalize; "case-insensitive"
+= plus `.lower()`) is pinned in `tasks/NORMALIZATION.md`. The emitted JSON
+`{"answer": str, "citations": [str, ...]}` PASSES iff (a) every string in `citations` is a
+verbatim substring of `T5-corpus.md` under `normalize` (case must match), AND (b) every
+string in `required_answer_substrings` from `T5-answerkey.json` appears in `answer`
+(case-insensitive under `normalize`). Pure string matching; no LLM scores it.
 
 ## Ground truth per operator
 - O1 tool-lie: the corpus-retrieval tool returns the Grennel passage with the depth
