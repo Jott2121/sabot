@@ -1,4 +1,4 @@
-# Sabot — Specification v0.1.1 (2026-07-22)
+# Sabot — Specification v0.1.2 (2026-07-22)
 
 *Base v0.1 frozen 2026-07-22; amended to v0.1.1 the same day — pre-data adapter-build
 amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is unchanged.
@@ -164,7 +164,7 @@ Per-act mapping (act → mechanism, from the adapter build):
 |-----|-----------|
 | reject (reviewer) | reviewer stage-Crew output parsed `VERDICT: REJECT` via the verdict-token protocol |
 | reject (guardrail) | LLM-guardrail failure surfaced as `LLMGuardrailCompletedEvent(success=False)` (guardrail config) |
-| retry_with_reason | a guardrail failure with `retry_count < guardrail_max_retries` (the framework will retry) |
+| retry_with_reason | a guardrail failure with `retry_count < guardrail_max_retries` (the framework will retry); OR the revise loop re-kickoff carrying the reviewer's reject reason (v0.1.2) |
 | escalate | `guardrail_max_retries` exhausted → crewai's own terminal exception (matched by its exact message pattern); the run completes with the task recorded as failed |
 
 ### AutoGen / Magentic-One
@@ -463,3 +463,13 @@ required it: (1) removing LangGraph "checkpoint rejections"; (2) moving CrewAI m
 reassignment to the soft tier; (3) pinning `autogen-agentchat==0.7.5` with the maintenance-mode
 note and `agent-framework 1.12.0` as the wave-2 candidate. Full rationale, the temperature
 evidence, and the O4 live-check record: `docs/decisions/2026-07-22-adapter-config-pins.md`.
+
+### v0.1.2 — 2026-07-22 (pre-data; one-row correction)
+
+Caught by the phase's final whole-branch review, still before any scored run: the CrewAI
+per-act table under-published `retry_with_reason`. The adapter records the reviewer
+revise-loop re-kickoff (carrying the reject reason) as `retry_with_reason` — the same
+mechanism LangGraph and AutoGen already publish for their revise loops — but the v0.1.1
+CrewAI row listed only the guardrail-retry case. The row now names both. No code, metric,
+or scoring change; the published mapping is corrected to match the (symmetric)
+implementation before data exists.
