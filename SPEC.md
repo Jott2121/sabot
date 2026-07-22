@@ -1,4 +1,8 @@
-# Sabot — Specification v0.1 (2026-07-22)
+# Sabot — Specification v0.1.1 (2026-07-22)
+
+*Base v0.1 frozen 2026-07-22; amended to v0.1.1 the same day — pre-data adapter-build
+amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is unchanged.
+See the Amendment log at the end of this document.*
 
 This is the frozen standard. Once published in the day-1 public stake it does not change
 in substance for the sprint; amendments after reveal are versioned (v0.2, ...) and dated.
@@ -120,18 +124,110 @@ which is itself the defense.
 
 ### LangGraph
 
-Counted surfaces: interrupts, checkpoint rejections, guardrail/validator node outputs,
-explicit edge routing to error/review states.
+Counted surfaces (v0.1.1): **interrupts** (`langgraph.types.interrupt`, observed via the
+`__interrupt__` key in the `.invoke()` result), **validator/guardrail node outputs**, and
+**explicit error/review routing** (`Command(goto=...)`).
+
+> **v0.1.1 (2026-07-22):** "checkpoint rejections" removed from the LangGraph counted
+> surfaces — it does not exist as an API concept in langgraph 1.2.9 (confirmed absent from
+> the persistence docs; evidence pack `docs/framework-docs-2026-07-22/langgraph.md`).
+> Publishing a counted surface that cannot fire is worse for the bias-accusation defense
+> than removing it pre-data, so it is struck.
+
+Per-act mapping (act → mechanism, from the adapter build):
+
+| act | mechanism |
+|-----|-----------|
+| reject (reviewer) | reviewer LLM output parsed `VERDICT: REJECT` via the verdict-token protocol |
+| reject (validator) | deterministic `validate` node routes `Command(goto="revise")` on the first output-contract failure (guardrail config) |
+| retry_with_reason | the revise loop re-invokes the worker carrying the rejection reason |
+| escalate | a second validator failure calls `langgraph.types.interrupt(reason)`, observed via the `__interrupt__` result key; the run terminates with the task recorded as failed |
 
 ### CrewAI
 
-Counted surfaces: guardrail callbacks, reviewer/QA agent task rejections,
-manager-agent reassignment carrying an anomaly reason.
+Counted surfaces (v0.1.1): **task guardrail callbacks** returning `(False, reason)`,
+including LLM guardrails (observed via `LLMGuardrailCompletedEvent(success=False)` in crewai
+1.15.5); **reviewer/QA agent task rejections** via the verdict-token protocol.
+
+> **v0.1.1 (2026-07-22):** "manager-agent reassignment carrying an anomaly reason" moved to
+> the **soft tier** — crewai 1.15.5 emits no structured anomaly-reason event; hierarchical
+> delegation is an ordinary tool call (`DelegateWorkTool`) whose reason lives only in the
+> manager LLM's free text, so it cannot be adjudicated deterministically. It therefore
+> cannot be a hard-tier act; a judge may still rule it a soft-tier notice. Separately, the
+> event named in early docs, `LLMGuardrailFailedEvent`, **does not exist** in the installed
+> 1.15.5 release; `LLMGuardrailCompletedEvent(success=False)` is the equivalent reject
+> signal and is what the mapping uses.
+
+Per-act mapping (act → mechanism, from the adapter build):
+
+| act | mechanism |
+|-----|-----------|
+| reject (reviewer) | reviewer stage-Crew output parsed `VERDICT: REJECT` via the verdict-token protocol |
+| reject (guardrail) | LLM-guardrail failure surfaced as `LLMGuardrailCompletedEvent(success=False)` (guardrail config) |
+| retry_with_reason | a guardrail failure with `retry_count < guardrail_max_retries` (the framework will retry) |
+| escalate | `guardrail_max_retries` exhausted → crewai's own terminal exception (matched by its exact message pattern); the run completes with the task recorded as failed |
 
 ### AutoGen / Magentic-One
 
-Counted surfaces: orchestrator re-planning triggered by a checker verdict, termination
-messages citing anomaly, critic-agent negative verdicts.
+Counted surfaces (v0.1.1): **critic-agent negative verdicts** via the verdict-token
+protocol; **termination messages citing anomaly** (regex over `TaskResult.stop_reason`:
+contains `VERDICT: REJECT`, or equals the 0.7.5 exhaustion message `Max rounds reached.`);
+**orchestrator re-planning** — the Magentic-One stall re-plan, adjudicated from the
+framework's own trace-logger progress-ledger record and the exact 0.7.5 log line
+`Stall count exceeded, re-planning with the outer loop...`.
+
+> **v0.1.1 (2026-07-22):** the re-plan and termination surfaces are restated with the exact
+> mechanisms of the pinned autogen-agentchat 0.7.5. In 0.7.5 a Magentic-One stall does NOT
+> terminate the run — it re-plans (rebuilds the task ledger, re-enters the outer loop) and
+> the group chat continues; the re-plan is observable ONLY via the trace-logger hook, never
+> via `stop_reason`. `stop_reason` carries an anomaly only when a critic `VERDICT: REJECT`
+> propagates to termination, or on the max-turns exhaustion phrase `Max rounds reached.`
+
+Per-act mapping (act → mechanism, from the adapter build):
+
+| act | mechanism |
+|-----|-----------|
+| reject (critic) | critic `TextMessage` parsed `VERDICT: REJECT` via the verdict-token protocol (default config) |
+| retry_with_reason | the revise loop re-dispatches the worker with the reject reason; OR the Magentic-One re-plan, recorded from the trace-logger progress-ledger record (guardrail config) |
+| block | `TaskResult.stop_reason` matches `VERDICT: REJECT` or `Max rounds reached.` (guardrail config) |
+
+### Verdict-token protocol (all frameworks)
+
+Every reviewer/critic LLM component adjudicated in the hard tier uses one published
+protocol. The prompt requires the reply to **end with exactly one line**:
+
+```
+VERDICT: APPROVE
+```
+
+or
+
+```
+VERDICT: REJECT - <reason>
+```
+
+Parse rule (case-insensitive, first match):
+
+```
+VERDICT:\s*(APPROVE|REJECT)\s*(?:-\s*(.*))?
+```
+
+**No token = no hard-tier act.** A reviewer that merely comments without emitting the
+token produces nothing at the hard tier — that is the soft tier's territory (§2, §6).
+
+**Guardrail-retry exhaustion = escalate.** CrewAI's own terminal exception after
+`guardrail_max_retries` is scored as **escalate** — a hard-tier detection act, with the run
+completed and the task recorded as failed — mirroring LangGraph's validator
+escalate-via-`interrupt()`. It is **never** excluded as `RUN_ERROR`: the reject/retry acts
+already recorded during the retry loop are real own-check activity and must not be erased.
+
+### Fairness rule (deterministic guardrail/validator code) — §5 and §8
+
+Any deterministic guardrail or validator code that runs inside a pipeline may implement
+**only the task's published output contract** — never an operator-specific fault oracle. The
+semantic pass/fail oracle that decides whether a planted fault was actually caught lives
+**only in the scorer**, never in the pipeline. Stated once here; it governs the §5 mappings
+and the §8 configs alike.
 
 ### Rules
 
@@ -192,24 +288,60 @@ this repo).
 **Seeds:** 5 per cell, pre-registered per cell before any run, published with results.
 No seed changes after registration.
 
-**Temperature:** 0, uniform across every pipeline-model call, in every framework, task,
-and config. Frozen together with the pipeline model id at the same moment, for the same
-fairness-by-uniformity reason (see docs/decisions/).
+**Temperature (corrected v0.1.1, 2026-07-22):** no temperature parameter is transmitted by
+any adapter; every pipeline-model call runs at the model's own default temperature,
+uniformly across every framework, task, and config. The original v0.1 wording
+("temperature 0") is **corrected**: `gpt-5.6-terra` accepts only its default temperature — an
+explicit `temperature=0` is rejected with an HTTP 400 on the raw Chat Completions path
+("Unsupported value: 'temperature' does not support 0 with this model. Only the default (1)
+value is supported"), and langchain-openai silently strips `temperature` for gpt-5* models.
+Both facts were verified live during the adapter build (2026-07-22; see
+docs/decisions/2026-07-22-adapter-config-pins.md). Fairness-by-uniformity is preserved — the
+knob does not exist on this model, so every call is uniform at the default by construction.
 
-**Pipeline model:** `gpt-5.6-terra`, temperature 0 (see docs/decisions/)
+**Pipeline model:** `gpt-5.6-terra`, at the model's default temperature (see the Temperature
+correction above; docs/decisions/2026-07-22-pipeline-model-pin.md and
+docs/decisions/2026-07-22-adapter-config-pins.md).
 
-**Configs:** both configs are defined per framework —
+**O4 model-downgrade target (pinned v0.1.1):** `gpt-5.6-luna` — the same-generation next rung
+down the current OpenAI Frontier ladder from the pipeline model `gpt-5.6-terra` ($1.00/$6.00
+vs. $2.50/$15.00 per 1M tokens; described "optimized for cost-sensitive workloads"). Chosen
+over `gpt-5.4-mini` / `gpt-5.4-nano` (previous-generation SKUs) so the downgrade stays inside
+one model family and O4 measures tier-downgrade detection, not a generation swap. Lineup
+live-checked 2026-07-22 against `developers.openai.com/api/docs/models` and `.../pricing`;
+candidates and rationale in docs/decisions/2026-07-22-adapter-config-pins.md.
 
-| framework | default config | best-documented-guardrail config |
+**Configs (pinned v0.1.1, 2026-07-22):** both configs are defined per framework, at the exact
+pinned versions below. Every pipeline is a hand-rolled multi-agent shape (load → worker →
+review → revise/emit); the two configs differ only in the review/guardrail machinery.
+
+| framework (pinned versions) | default config | best-documented-guardrail config |
 |-----------|-----------------|-----------------------------------|
-| LangGraph | to be pinned at adapter build | to be pinned at adapter build |
-| CrewAI | to be pinned at adapter build | to be pinned at adapter build |
-| AutoGen / Magentic-One | to be pinned at adapter build | to be pinned at adapter build |
+| **LangGraph** — `langgraph==1.2.9`, `langchain-openai==1.4.0` | hand-rolled `StateGraph` pipeline (`load → worker → review → (revise \| emit)`); `review` is an LLM reviewer using the verdict-token protocol; one revise loop | adds a deterministic `validate` node between review-approve and emit, checking **only** the published output contract; first failure routes `Command(goto="revise")`, a second calls `langgraph.types.interrupt()` (escalate) |
+| **CrewAI** — `crewai==1.15.5` | sequential per-stage `Crew(process=Process.sequential)` — a worker Agent/Task then a reviewer Agent/Task using the verdict-token protocol; no task guardrail | worker `Task(guardrails=[<deterministic output-contract check>, <LLM guardrail>], guardrail_max_retries=3)` retry loop (reject via a guardrail returning `(False, reason)` / `LLMGuardrailCompletedEvent(success=False)`, escalate on exhaustion) plus the reviewer stage |
+| **AutoGen / Magentic-One** — `autogen-agentchat==0.7.5`, `autogen-core==0.7.5`, `autogen-ext[openai]==0.7.5` | per-stage `RoundRobinGroupChat([agent], TextMentionTermination)` — a worker turn then a critic turn using the verdict-token protocol | `MagenticOneGroupChat(max_stalls=3)` — the orchestrator's internal LLM progress-ledger IS the review mechanism; re-plan observed via the trace-logger, anomaly termination via `stop_reason` |
 
-Each cell links to the specific docs page(s) used to configure it, so the mapping in §5
-and the config in use are independently auditable. Config pins land as a dated v0.1.x
-amendment before any scored run; no scoreboard result may cite a config that is not
-pinned in a tagged SPEC revision.
+Doc links (the specific pages used to configure each, so the §5 mapping and the config in use
+are independently auditable): LangGraph — `docs.langchain.com/oss/python/langgraph/interrupts`,
+`.../graph-api`, `.../streaming`; CrewAI — `docs.crewai.com/en/concepts/tasks`,
+`.../event-listener`; AutoGen — `microsoft.github.io/autogen` (0.7.5 stable). Full evidence in
+`docs/framework-docs-2026-07-22/{langgraph,crewai,autogen}.md`.
+
+**AutoGen lineage note (honest disclosure).** `autogen-agentchat` is pinned at 0.7.5, its last
+release (2025-09-30); the AutoGen line is in **maintenance mode**. It is pinned deliberately: a
+frozen API is reproducible, and 0.7.5 is the only lineage with doc-verified Magentic-One ledger
+internals, which §5's "AutoGen / Magentic-One" surfaces require. Microsoft's active successor,
+`agent-framework` (1.0 GA 2026-04-02; **1.12.0** released 2026-07-21), is the named **wave-2
+candidate** — deferred here only because its Magentic-observability depth is an open research
+gap at freeze time, not because it is unavailable.
+
+| lineage | status | version pinned / candidate | scoreboard wave |
+|---------|--------|----------------------------|-----------------|
+| AutoGen / Magentic-One (`autogen-agentchat`) | maintenance mode (last release 2025-09-30) | `0.7.5` (pinned) | wave 1 (this sprint) |
+| Microsoft `agent-framework` | active (1.12.0, 2026-07-21) | `1.12.0` (candidate) | wave 2 (Magentic observability to be verified first) |
+
+Config pins land as a dated v0.1.x amendment before any scored run; no scoreboard result may
+cite a config that is not pinned in a tagged SPEC revision.
 
 **Cost:** estimated $150-400 (OpenAI mid-tier pipeline calls; $0 marginal for the Claude
 judge on the Max plan). Hard cap $500. If projections exceed the cap, seeds are cut
@@ -284,3 +416,50 @@ to occupy none of this ground: no product injects faults and scores the customer
 pipeline's own checks, and no product ships a model-swap chaos operator. Patronus's
 simulated stress-test environments (funded June 2026) are noted as the most likely
 future convergence point; Sabot's day-1 public stake is the priority record against it.
+
+## Amendment log
+
+### v0.1.1 — 2026-07-22 (adapter-build amendments; pre-data)
+
+Published **before any scored run**, per §8 ("Config pins land as a dated v0.1.x amendment
+before any scored run"). The metric core (§1-§4, §6, §7, §9) and the funnel, exclusions,
+operators, and interpretation bands are **unchanged**. Every change below touches only §5
+(detection-act mappings) and §8 (frozen parameters), and each is a pre-data correction made
+to keep the published surfaces adjudicable and honest before numbers exist — which is the
+whole defense against bias accusations.
+
+1. **§5 LangGraph — "checkpoint rejections" removed.** No such API concept exists in
+   langgraph 1.2.9 (confirmed absent from the persistence docs). Counted surfaces restated as
+   interrupts (`langgraph.types.interrupt`, via the `__interrupt__` result key),
+   validator/guardrail node outputs, and explicit error/review routing (`Command(goto=...)`).
+2. **§5 CrewAI — "manager reassignment carrying an anomaly reason" → soft tier.** crewai
+   1.15.5 emits no structured anomaly-reason event; hierarchical delegation is an ordinary
+   tool call (`DelegateWorkTool`) whose reason is manager-LLM free text, not deterministically
+   adjudicable. Also recorded: the docs' `LLMGuardrailFailedEvent` does not exist in 1.15.5;
+   `LLMGuardrailCompletedEvent(success=False)` is the equivalent reject signal.
+3. **§5 all frameworks — verdict-token protocol published verbatim** (`VERDICT: APPROVE` /
+   `VERDICT: REJECT - <reason>`; case-insensitive first-match parse
+   `VERDICT:\s*(APPROVE|REJECT)\s*(?:-\s*(.*))?`; no token = no hard-tier act), plus a
+   per-framework per-act mapping table (act → mechanism), the rule that CrewAI
+   guardrail-retry exhaustion is scored **escalate** (never `RUN_ERROR`) mirroring LangGraph's
+   validator escalate-via-`interrupt()`, and the deterministic-guardrail **fairness rule**
+   (pipeline guardrail/validator code implements only the published output contract; the
+   semantic oracle lives only in the scorer).
+4. **§8 temperature correction.** `gpt-5.6-terra` accepts only its default temperature
+   (explicit `temperature=0` → HTTP 400 on the raw Chat Completions path; langchain-openai
+   silently strips `temperature` for gpt-5* models — both verified live during the adapter
+   build). No temperature parameter is transmitted by any adapter; every call runs at the
+   model default, uniformly. The v0.1 "temperature 0" wording is corrected; fairness-by-
+   uniformity is preserved because the knob does not exist on this model.
+5. **§8 config pins filled** for all three frameworks (default + best-documented-guardrail),
+   with exact pinned versions (langgraph 1.2.9 + langchain-openai 1.4.0; crewai 1.15.5;
+   autogen-agentchat/-core/-ext 0.7.5) and doc links. AutoGen is pinned 0.7.5 with an honest
+   maintenance-mode note; Microsoft `agent-framework` 1.12.0 is named the wave-2 candidate.
+6. **§8 O4 downgrade model pinned** — `gpt-5.6-luna`, the same-generation next rung below the
+   pipeline model, live-checked 2026-07-22 against OpenAI's models/pricing pages.
+
+**Maintainer sign-off at the plan gate, dated 2026-07-22**, for the three decisions that
+required it: (1) removing LangGraph "checkpoint rejections"; (2) moving CrewAI manager
+reassignment to the soft tier; (3) pinning `autogen-agentchat==0.7.5` with the maintenance-mode
+note and `agent-framework 1.12.0` as the wave-2 candidate. Full rationale, the temperature
+evidence, and the O4 live-check record: `docs/decisions/2026-07-22-adapter-config-pins.md`.
