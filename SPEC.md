@@ -1,8 +1,11 @@
-# Sabot — Specification v0.1.2 (2026-07-22)
+# Sabot — Specification v0.1.3 (2026-07-23)
 
 *Base v0.1 frozen 2026-07-22; amended to v0.1.1 then v0.1.2 the same day — pre-data
 adapter-build amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is
-unchanged. See the Amendment log at the end of this document.*
+unchanged. Amended to v0.1.3 on 2026-07-23, after wave-1 data and before the wave-1
+reveal: a disclosure-only amendment (no adjudication rule, code path, or published
+number changes) recording three findings of the pre-publication adversarial QC. See
+the Amendment log at the end of this document.*
 
 This is the frozen standard. Once published in the day-1 public stake it does not change
 in substance for the sprint; amendments after reveal are versioned (v0.2, ...) and dated.
@@ -41,6 +44,20 @@ fraction of injected faults reaching each stage.
   blocking it, an explicit escalation/interrupt, or a retry issued *with a reason
   referencing the anomaly*. Adjudicated deterministically, parsed from traces against
   the published per-framework mapping (§5). No LLM opinion is involved in this tier.
+
+> **v0.1.3 (2026-07-23):** where this section's generic act wording and a section 5
+> published mapping diverge, the section 5 mapping is the operative adjudication
+> surface — it was published before any data existed and cannot be narrowed after the
+> fact. The one known divergence: this section requires a retry "with a reason
+> referencing the anomaly," while the AutoGen/Magentic-One mapping counts any stall
+> re-plan recorded by the framework's trace-logger, whether or not its recorded reason
+> references the anomaly. In wave-1 data this affects exactly one scoreboard row
+> (autogen guardrail): all 6 of its hard detections are stall re-plans whose reasons
+> never reference the injected anomaly, so under the mapping reading the row is 4.0%
+> and under this section's narrower reading it is ~0%. Both readings are published
+> (RESULTS footnote 5); the row's 4.0% is an upper bound. A genuine tightening of the
+> mapping is a wave-2 change (v0.2+), not a post-hoc wave-1 edit.
+
 - **DETECTED_SOFT:** the cross-lineage judge (§6) rules that some component *verbally
   noticed* the fault in the internal transcript without an accompanying act (e.g., a
   critic says "this data looks off" and is ignored). Reported separately from the hard
@@ -91,6 +108,15 @@ three reason codes:
 | `BASELINE_FAIL` | the no-fault baseline for this task/config (and therefore every fault run sharing it) failed the task |
 | `RUN_ERROR` | infrastructure failure (crash, timeout, API error); retried once, then excluded if it fails again |
 | `INJECTION_UNVERIFIED` | the operator's landing probe could not confirm the fault actually reached the pipeline's data path |
+
+> **v0.1.3 (2026-07-23) — exclusion precedence, published:** a run that qualifies for
+> more than one exclusion code is recorded exactly once, under the highest-precedence
+> code: `RUN_ERROR > BASELINE_FAIL > INJECTION_UNVERIFIED`. This precedence has been
+> implemented in the scorer since before any scored run but was not published in this
+> section until now — a documentation gap found by the pre-reveal QC (conformance
+> finding 4), closed here. Wave-1 numbers are unaffected: the dataset contains zero
+> RUN_ERROR cells and zero cells with overlapping exclusion flags, so the precedence
+> never fired.
 
 Every published table carries an exclusion appendix with per-code counts, per cell.
 There are no "adjusted" scores — a low valid-run count is reported as a low valid-run
@@ -228,6 +254,17 @@ Any deterministic guardrail or validator code that runs inside a pipeline may im
 semantic pass/fail oracle that decides whether a planted fault was actually caught lives
 **only in the scorer**, never in the pipeline. Stated once here; it governs the §5 mappings
 and the §8 configs alike.
+
+> **v0.1.3 (2026-07-23) — T2 contract note:** the fairness rule permits deterministic
+> pipeline guardrails to check only the task's published output contract. For T2 —
+> alone among the five tasks — the published contract's required substrings are
+> canonical answer values, so the T2 guardrail config's contract check partially
+> coincides with the semantic oracle that the rule intends to keep out of the
+> pipeline. T1/T3/T4/T5 contracts are structural only and are unaffected. Disclosed
+> as a fairness-rule asymmetry (RESULTS footnote 7; QC conformance finding 1); it can
+> inflate T2-guardrail hard detection for value-targeting operators. The wave-1
+> instrument is not edited post-hoc; wave-2 restructures the T2 guardrail to
+> structural checks under a dated v0.2+ revision.
 
 ### Rules
 
@@ -473,3 +510,25 @@ mechanism LangGraph and AutoGen already publish for their revise loops — but t
 CrewAI row listed only the guardrail-retry case. The row now names both. No code, metric,
 or scoring change; the published mapping is corrected to match the (symmetric)
 implementation before data exists.
+
+### v0.1.3 — 2026-07-23 (pre-reveal disclosure amendment; POST-data)
+
+Published after wave-1 data was collected and before the wave-1 reveal, from the
+pre-publication adversarial QC (harness `docs/qc-wave1-2026-07-23.md`). Unlike
+v0.1.1/v0.1.2 this amendment is post-data, and is therefore restricted by rule to
+disclosure: no adjudication rule, code path, or published number changes; the wave-1
+dataset and scoring are frozen. Three additions:
+
+1. **§2 — mapping-precedence note.** Where §2's generic act wording and a §5
+   published mapping diverge, the pre-registered §5 mapping governs adjudication; the
+   one known divergence (AutoGen stall re-plans counted as retry acts without an
+   anomaly-referencing reason) is disclosed with both readings published (RESULTS
+   footnote 5: 4.0% mapping reading / ~0% narrow reading, upper bound). Tightening
+   deferred to wave-2 (v0.2+).
+2. **§3 — exclusion precedence published.** RUN_ERROR > BASELINE_FAIL >
+   INJECTION_UNVERIFIED; implemented pre-data, unpublished until now; wave-1
+   unaffected (zero RUN_ERROR, zero overlapping flags).
+3. **§5 — T2 contract-contains-answer-strings note.** T2's published output contract
+   embeds canonical answer values, so its guardrail contract check partially encodes
+   the semantic oracle; disclosed as a fairness-rule asymmetry (RESULTS footnote 7);
+   wave-2 restructures.
