@@ -1,0 +1,57 @@
+[project]
+name = "sabot-harness"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "mutmut>=3"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.mutmut]
+source_paths = [
+    "sabot/acts.py", "sabot/operators.py", "sabot/score.py",
+    "sabot/checks.py", "sabot/serde.py", "sabot/adapters/recorder.py",
+    "sabot/adapters/verdict.py", "sabot/judge/rubric.py",
+    "sabot/matrix.py", "sabot/judge/notes.py", "sabot/scoreboard.py",
+]
+# also_copy = ["sabot"]: mutmut only copies exactly the files listed in
+# source_paths into its sandboxed mutants/ tree (it does not walk the rest of
+# the package). Several of the newly-scoped Phase-3 files import sibling
+# modules that are deliberately NOT mutated (sabot/trace.py, sabot/runner.py,
+# sabot/judge/runner.py, the package __init__.py files) -- without this, the
+# sandboxed pytest collection fails with ModuleNotFoundError. Copying the
+# whole sabot/ tree unmutated first is safe: create_mutants() runs AFTER
+# copy_also_copy_files() and overwrites exactly the source_paths files above
+# with their mutated versions, so nothing here dilutes what actually gets
+# mutated.
+also_copy = ["sabot", "scripts"]
+# "scripts" added for Task 6 (Phase 4): tests/test_run_matrix.py and
+# tests/test_run_judge.py load scripts/run_matrix.py / scripts/run_judge.py via
+# importlib.util using `ROOT = Path(__file__).resolve().parent.parent` -- once mutmut
+# copies the test file into mutants/tests/, ROOT resolves to mutants/ and the driver
+# scripts must exist there too or collection fails with FileNotFoundError. Neither
+# script is in source_paths, so copying them unmutated has zero effect on mutation
+# coverage -- it only makes the two indirect-coverage suites collectible in the sandbox.
+# tests/test_venvs.py resolves its ROOT via `Path(__file__).resolve().parent.parent`,
+# which breaks once mutmut physically copies the test file into mutants/tests/ (ROOT
+# becomes mutants/ instead of the real repo root, so the .venv-* framework venvs it
+# checks for "don't exist" there). It exercises no sabot/*.py source line, so excluding
+# it from mutmut's own internal test run has no effect on mutation coverage -- it still
+# runs normally under a plain `pytest -q` from the repo root.
+pytest_add_cli_args_test_selection = ["--ignore=tests/test_venvs.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# crewai 1.15.5 emits its own DeprecationWarnings when real Crew/Agent/Task objects are
+# built offline; scoped so harness-origin warnings stay visible (reviewer-recommended).
+filterwarnings = ["ignore::DeprecationWarning:crewai.*"]
+markers = [
+    "judge_live: hits the real sandboxed `claude -p` subprocess (Task 9 soft-tier judge); deselected by default via addopts, run explicitly with `-m judge_live`.",
+]
+# judge_live is deselected by default: it shells out to the real `claude` CLI. Run it
+# explicitly with `-m judge_live` (an explicit -m on the command line overrides this one).
+addopts = "-m \"not judge_live\""

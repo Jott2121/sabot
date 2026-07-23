@@ -28,6 +28,38 @@ bands: [SPEC.md](SPEC.md).
   AutoGen/Magentic-One) in progress; harness and raw traces publish here with the
   results. Interpretation bands are pre-registered in SPEC §7 *before* any data exists,
   and results publish regardless of what they show.
+- **2026-07-23:** Wave-1 results, harness, and raw traces published (below). SPEC
+  amended to v0.1.3 (pre-reveal disclosure amendment; see the Amendment log).
+
+## Wave-1 results (2026-07-23)
+
+**Median hard-tier Sabot Score across the three frameworks: 16.7%** — the pre-registered
+"full push" band. The dominant outcome in *every* scoreboard row (51–61% of valid
+faults) is **recovery-without-detection**: the task output is correct while nothing in
+the pipeline ever flags the injected fault. Trace analysis shows the pipeline model
+frequently notices the anomaly and routes around it without emitting any act.
+
+| framework | config | Sabot Score (hard) | soft notice | recovery w/o detection |
+|---|---|---|---|---|
+| LangGraph | default | 18.0% | 20.0% | 58.0% |
+| LangGraph | guardrail | 15.2% | 17.4% | 60.6% |
+| CrewAI | default | 18.2% | 18.9% | 56.8% |
+| CrewAI | guardrail | 21.4% | 22.2% | 53.2% |
+| AutoGen | default | 21.0% | 24.6% | 54.3% |
+| AutoGen (Magentic-One) | guardrail | 4.0%† | 15.3% | 51.3% |
+
+† Upper bound, structurally confounded — 75 of this row's 150 cells cannot
+structurally detect, and its 6 counted detections are stall noise reproduced by
+clean runs; on the comparable operator subset the two AutoGen configs are
+indistinguishable (8.7% vs 8.0%). Never quote this row without
+[footnotes 4–5](harness/RESULTS.md).
+
+Full scoreboard with exclusion appendix and all footnotes:
+[harness/RESULTS.md](harness/RESULTS.md). Pre-publication adversarial QC ledger:
+[harness/docs/qc-wave1-2026-07-23.md](harness/docs/qc-wave1-2026-07-23.md). The
+complete harness (Apache-2.0, see [LICENSE-CODE](LICENSE-CODE)), spend ledger, and
+the raw trace corpus for every run — including the quarantine directories from both
+disclosed infrastructure incidents — live under [harness/](harness/).
 
 ## Standing on prior work
 

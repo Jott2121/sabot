@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+results/
+traces/
+*.env
+.superpowers/
+mutants/
+.mutmut-cache
+mutmut-stats.json
+*.egg-info/
+.venv-*/
