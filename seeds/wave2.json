@@ -1,0 +1,7 @@
+{
+  "registered": "2026-07-23",
+  "spec_version": "v0.2.0",
+  "wave": 2,
+  "rule": "Wave-1's registered seeds reused verbatim so every wave-1-vs-wave-2 comparison is same-cell paired; registered before any wave-2 scored run and never changed after registration.",
+  "seeds": [11, 12, 13, 14, 15]
+}

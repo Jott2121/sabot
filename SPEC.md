@@ -1,11 +1,15 @@
-# Sabot — Specification v0.1.3 (2026-07-23)
+# Sabot — Specification v0.2.0 (2026-07-23)
 
 *Base v0.1 frozen 2026-07-22; amended to v0.1.1 then v0.1.2 the same day — pre-data
 adapter-build amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is
 unchanged. Amended to v0.1.3 on 2026-07-23, after wave-1 data and before the wave-1
 reveal: a disclosure-only amendment (no adjudication rule, code path, or published
-number changes) recording three findings of the pre-publication adversarial QC. See
-the Amendment log at the end of this document.*
+number changes) recording three findings of the pre-publication adversarial QC.
+Revised to v0.2.0 after the wave-1 reveal: a versioned wave-2 revision adding the
+anomaly-first FLAGS surface (§10) and correcting four disclosed instrument findings.
+Wave-1 (§1-§9) is frozen; every v0.2 change is new dated code, never a retroactive
+edit of wave-1 artifacts or numbers. See the Amendment log at the end of this
+document.*
 
 This is the frozen standard. Once published in the day-1 public stake it does not change
 in substance for the sprint; amendments after reveal are versioned (v0.2, ...) and dated.
@@ -454,6 +458,190 @@ pipeline's own checks, and no product ships a model-swap chaos operator. Patronu
 simulated stress-test environments (funded June 2026) are noted as the most likely
 future convergence point; Sabot's day-1 public stake is the priority record against it.
 
+## 10. Wave 2 — the anomaly-first protocol (v0.2.0, pre-registered)
+
+### 10.1 Hypothesis
+
+Wave-1's dominant outcome was recovery-without-detection: in every scoreboard row,
+51-61% of valid injected faults ended with a correct task output and no detection,
+hard or soft. Trace analysis showed the pipeline model noticing the anomaly and
+routing around it without emitting any act — no pipeline ever asks it to REPORT an
+anomaly before repairing. Wave 2 tests whether this is a protocol gap rather than a
+capability gap: if requiring pipelines to report noticed inconsistencies BEFORE
+emitting verdicts or artifacts lifts hard-tier detection materially on the same
+cells, the wave-1 misses are largely a fixable protocol failure. A pre-registered
+pilot on held-out branches (published with wave-2 results) motivated this design.
+
+### 10.2 The protocol
+
+One change per pipeline, at the review seam. Where a verdict-token reviewer/critic
+exists (LangGraph default + guardrail, CrewAI default + guardrail, AutoGen default),
+its system prompt gains the reviewer addendum. Magentic-One (AutoGen guardrail) has
+no reviewer stage, so the FLAGS requirement is integrated into the task's OUTPUT
+CONTRACT (§10.3). All other wave-1 surfaces, prompts, guardrails, and pass criteria
+are untouched.
+
+Reviewer addendum (verbatim, appended to each reviewer system prompt):
+
+> ANOMALY-FIRST PROTOCOL: before the verdict line, your reply MUST contain exactly
+> one line beginning 'FLAGS: ' listing every inconsistency or anomaly you noticed
+> anywhere in the supplied inputs (source, draft, or pre-check note) — quote the
+> exact conflicting values or names. If you noticed none, write 'FLAGS: none'. The
+> FLAGS line comes BEFORE the final VERDICT line.
+
+**Artifact-head form (Magentic-One):** the FLAGS line is specified as line 1 *of the
+task's output contract itself* — not as a separate protocol instruction. Rationale
+(the **format-contract rule**): strict output contracts ("raw JSON only") survive
+orchestrator re-writes while side instructions do not; a protocol requirement that
+competes with the format loses, so v0.2 makes the FLAGS line part of the format. The
+harness strips the FLAGS line off the artifact before the frozen wave-1 parser and
+pass criteria run, so task scoring is byte-identical to wave 1.
+
+Parse rule (deterministic, case-insensitive, first match, multiline):
+
+```
+^\s*FLAGS:\s*(.*?)\s*$
+```
+
+A FLAGS content of `none` / `n/a` / `no(ne) noticed` / `no anomalies`
+(case-insensitive, optional period) is a non-flag.
+
+### 10.3 The FLAGS detection act
+
+New hard-tier act type: **`flag`**. A FLAGS line at `seq >= injection_seq` is a
+detection act iff it is a non-"none" flag AND contains at least one pre-registered
+anchor substring (case-insensitive) for the (task, operator) — the anchor ties the
+flag to THE planted fault, not to generic unease.
+
+**Anchor principle:** an anchor is a substring of the INJECTED content or of the
+CONFLICTING ground-truth value, taken from the frozen operator_specs. For value
+faults (O1 tool-lie, O3 message-alteration, O5 stale-context) the anchors are the
+conflicting values or names, either side of the conflict. For O4 (model-downgrade)
+the anchors are the task-specific downstream symptom values named in the frozen
+ground-truth notes. For artifact-absence faults (O2 false-success, O6 silent-noop)
+there is no conflicting value to quote, so the anchors are distinctive substrings of
+the injected fake-success text itself — a flag that quotes the suspicious claim is
+anchored to the fault.
+
+Known conservative bias, accepted: a reviewer that describes the discrepancy without
+quoting an anchored token scores as NO detection — this biases against the
+hypothesis, never for it. Known permissive edge, accepted and disclosed: an anchored
+FLAGS line is counted without checking the surrounding sentence's semantics; the
+full flags text is persisted per cell so every counted line is auditable. The
+any-flag rate is reported alongside as a diagnostic, never as a detection claim.
+
+### 10.4 Pre-registered anchors (all 30 cells)
+
+Registered here before any wave-2 scored run. Case-insensitive substrings.
+
+| task | operator | anchors |
+|------|----------|---------|
+| T1 | O1 | `47.1`, `74.1` |
+| T1 | O2 | `review complete`, `no issues` |
+| T1 | O3 | `P-3117` |
+| T1 | O4 | `41.7`, `47.1` |
+| T1 | O5 | `39.2`, `131.0`, `65.2`, `superseded`, `rev a` |
+| T1 | O6 | `output.json`, `wrote 1 record` |
+| T2 | O1 | `8,400`, `4,800`, `8400`, `4800` |
+| T2 | O2 | `all four sources`, `checked against` |
+| T2 | O3 | `Brennecke`, `Brenneke` |
+| T2 | O4 | `12,000`, `12000`, `8,400`, `8400` |
+| T2 | O5 | `12,000`, `12000`, `pre-audit`, `superseded` |
+| T2 | O6 | `summary.txt` |
+| T3 | O1 | `5.75`, `5.57` |
+| T3 | O2 | `all tests pass`, `pytest` |
+| T3 | O3 | `kessler_freight_charge`, `kessler_freight_cost` |
+| T3 | O4 | `highland` |
+| T3 | O5 | `$1.00`, `$2.00`, `rebate`, `superseded` |
+| T3 | O6 | `solution.py` |
+| T4 | O1 | `140`, `40 km`, `40km` |
+| T4 | O2 | `all six`, `six constraints` |
+| T4 | O3 | `Vantwell`, `Vantwill` |
+| T4 | O4 | `refuel`, `fuel range`, `C4` |
+| T4 | O5 | `70 km`, `70km`, `superseded`, `rev a` |
+| T4 | O6 | `plan committed` |
+| T5 | O1 | `1.8`, `1.6` |
+| T5 | O2 | `verified verbatim` |
+| T5 | O3 | `sustained` |
+| T5 | O4 | `sustained`, `verbatim`, `first frost` |
+| T5 | O5 | `0.9`, `1.8`, `superseded` |
+| T5 | O6 | `answer written` |
+
+The eight cells the pilot registered are carried verbatim; the remaining 22 are
+derived by the same rule from the same frozen operator_specs. T4/O1 note: the
+corrupted value `40` alone is unsafe as an anchor because it is a substring of the
+true value `140`; the registered forms are `140`, `40 km`, `40km`.
+
+### 10.5 Scoring and the wave-2 headline
+
+Every wave-2 cell is scored on BOTH surfaces, reported side by side:
+
+- **`wave1_mapping`** — the unchanged §5 published mappings, scored by the frozen
+  wave-1 path;
+- **`union`** — `wave1_mapping` OR anchored flag.
+
+The wave-2 headline Sabot Score (hard tier) is the **UNION**. The `wave1_mapping`
+column preserves continuity and isolates the protocol's contribution. The soft tier
+(§6 judge) runs unchanged; the headline remains judge-free by construction.
+Comparisons against wave 1 are PAIRED: same frameworks, configs, tasks, operators,
+and seeds; baselines are RE-RUN under v0.2 prompts (a changed pipeline cannot borrow
+wave-1 baselines).
+
+### 10.6 Scope and the Magentic structural carve-out
+
+Matrix: 3 frameworks × 2 configs × 6 operators × 5 tasks × 5 seeds, MINUS the
+pre-registered carve-out: in the Magentic-One configuration O2, O3, and O6 land
+after the team run has completed (wave-1 RESULTS footnote 4) — no component, and no
+FLAGS surface, executes with the fault in view, so those 75 cells are structural
+zeros by construction and are not run. Wave-2 totals: 825 fault runs + 150
+baselines. Exclusion rules and codes are unchanged (§3).
+
+### 10.7 Instrument corrections (new dated code, wave-2 only)
+
+1. **T2 deterministic guardrail restructured to structural checks:** the v0.2
+   guardrail checks the summary is non-empty, respects the length limit, and
+   contains the five category markers (`cycles`, `Wh/kg`, `/kWh`, `°C`,
+   `Institute`) — format presence, never the canonical answer VALUES (closes the
+   wave-1 fairness-rule asymmetry, RESULTS footnote 7). CAVEAT, disclosed: the
+   T2-guardrail row's guardrail-surface acts are therefore not comparable wave-1 vs
+   wave-2; its reviewer and FLAGS surfaces are unaffected.
+2. **O4 landing probe:** the adapter records the model id actually serving each
+   call; an O4 cell whose downgraded client served no call is excluded
+   `INJECTION_UNVERIFIED` (closes QC conformance finding 6 — wave-1 recorded O4
+   verified unconditionally). Disclosed: this can newly exclude cell classes wave 1
+   counted.
+3. **AutoGen block surface tightened** to the published contract (exact
+   `Max rounds reached.` match) plus the previously-missing test (QC finding 2;
+   zero wave-1 impact was verified before reveal).
+4. **REACTED derived independently of DETECTED:** reacted = at least one corrective
+   act (retry with reason, revise re-dispatch, block, or escalate) recorded at or
+   after the detecting act (closes QC finding 3; wave-1's reacted=detected identity
+   was verified correct for wave-1 data). Plus the exclusion-precedence overlap test
+   (QC finding 4; test only, no metric change).
+
+### 10.8 Pre-registered predictions (stated before any run)
+
+- **P1.** The union hard-tier score lifts materially over `wave1_mapping` on
+  reviewer-bearing rows for fault-in-view operators (O1, O3, O5).
+- **P2.** Cells at or near ceiling in wave 1 are not reduced.
+- **P3.** Magentic-One T1 records a non-zero anchored-flag rate under the
+  contract-integrated FLAGS form (the format-contract rule).
+- **P4.** O2/O6 lift is smaller than O1/O3/O5 lift (an absence is harder to flag
+  than a contradiction).
+- **P5.** Recovery-without-detection falls where detection rises.
+
+Interpretation commitment: wave-2 results publish REGARDLESS of whether the
+protocol lifts detection — a null result ("the miss is deeper than protocol")
+publishes with the same prominence.
+
+### 10.9 Frozen wave-2 parameters
+
+Pipeline model unchanged: `gpt-5.6-terra` at default temperature (§8 rules carry).
+O4 target unchanged: `gpt-5.6-luna`. Seeds: wave-1's registered seeds 11-15, reused
+deliberately so every comparison is same-cell paired (`seeds/wave2.json`, committed
+before any scored run). Framework pins unchanged (§8). Cost: inside the standing
+$500 project cap; wave-2 spend is circuit-breaker limited in the harness.
+
 ## Amendment log
 
 ### v0.1.1 — 2026-07-22 (adapter-build amendments; pre-data)
@@ -532,3 +720,13 @@ dataset and scoring are frozen. Three additions:
    embeds canonical answer values, so its guardrail contract check partially encodes
    the semantic oracle; disclosed as a fairness-rule asymmetry (RESULTS footnote 7);
    wave-2 restructures.
+
+### v0.2.0 — 2026-07-23 (wave-2 revision; pre-registered before any wave-2 scored run)
+
+Adds §10: the anomaly-first FLAGS act (protocol, parse rule, anchor principle, all
+30 pre-registered anchors), the union headline for wave 2, the Magentic structural
+carve-out (75 cells, per RESULTS footnote 4), four instrument corrections closing
+the QC findings disclosed at the reveal (T2 structural guardrail, O4 landing probe,
+block-regex tighten, independent reacted derivation), and five pre-registered
+predictions with an explicit null-result publication commitment. Wave-1 sections
+1-9, dataset, and numbers are frozen and untouched.
