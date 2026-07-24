@@ -90,7 +90,13 @@ tagged spec before any scored run.
 ‡ Strict injection-evidence floor: counts only flags quoting injection-only tokens.
 It deliberately under-counts (it discards genuine paraphrase detections); the truth
 lies between the floor and the published number, and **both should be quoted as a
-pair**. † True wave-1 detection in this row is ~0% (wave-1 footnote 5). § **73.6% is
+pair**. The strict column is currently a stated QC-pass result rather than a
+committed code path; making it independently reproducible is the first v0.2.1 item
+([QC ledger finding 5](harness/docs/qc-wave2-2026-07-24.md)). † Same six wave-1
+detections as the 4.0% in the wave-1 table above; the rate differs because the
+denominator does — 150 valid wave-1 cells there, versus the 72 that survive wave-2's
+pre-registered Magentic carve-out here. True detection in this row is ~0% either way
+(wave-1 footnote 5). § **73.6% is
 the honest number for this row, not the 84.7% in the scoreboard's union column** —
 84.7% arises only under the permissive pre-registered mapping, whose Magentic acts are
 100% stall noise ([footnotes 1–2](harness/runs/wave2/WAVE2-RESULTS.md)).
@@ -124,7 +130,10 @@ Adversarial QC ledger — an independent 189/189 recompute, the attack on the bi
 lift claim, and the judge-sandbox incident:
 [harness/docs/qc-wave2-2026-07-24.md](harness/docs/qc-wave2-2026-07-24.md). Raw
 traces for all 975 wave-2 runs and both quarantine directories are under
-[harness/runs/](harness/runs/).
+[harness/runs/](harness/runs/). Mutation-testing receipts:
+[harness/MUTATION.md](harness/MUTATION.md). Spend ledger, including the wave-2
+derivation and the caveat that the margined meter under-reads real billing:
+[harness/SPEND.md](harness/SPEND.md).
 
 ## Papers
 

@@ -31,9 +31,9 @@ that single change, under adjudication rules, anchors, and five predictions
 pre-registered publicly before any scored run. Hard-tier detection (frozen wave-1
 mapping OR an anchored FLAGS report) rose from 15-21% to 53-56% on every
 standard scoreboard row (strict injection-evidence floor: 47-52%), and from
-approximately zero to 73.6% on the Magentic-One configuration once its reporting
-requirement was integrated into the task's output contract rather than appended
-as an instruction. The negative results are reported with equal prominence: the
+approximately zero to 73.6% (strict floor 58.3%) on the Magentic-One
+configuration once its reporting requirement was integrated into the task's
+output contract rather than appended as an instruction. The negative results are reported with equal prominence: the
 FLAGS surface carries no signal for silent model downgrades (indistinguishable
 from its 26% clean-baseline false-anchor base rate), the output-contract change
 itself perturbs the Magentic orchestrator (clean-run stall re-plans rise 3/25 to
@@ -41,9 +41,10 @@ itself perturbs the Magentic orchestrator (clean-run stall re-plans rise 3/25 to
 discount), one previously-at-ceiling cell class got worse, and reporting is not
 reacting — flag-only detections carry no corrective act, so the
 notice-without-act phenomenon wave 1 named migrates onto the new surface rather
-than disappearing. All raw traces, the quarantine trail from a mid-run quota
-outage, an independent 189/189 recompute, and the adversarial QC ledger publish
-as the evidence package.
+than disappearing. All raw traces, both quarantine trails — one from a mid-run
+quota outage and one from a mid-run breach of the judge's own tool sandbox that
+the instrument's canary caught (section 6) — an independent 189/189 recompute,
+and the adversarial QC ledger publish as the evidence package.
 
 ## 1. Introduction
 
@@ -124,11 +125,17 @@ magentic acts are 100% stall noise (section 5.2). The strict floor counts only
 flags quoting injection-only tokens — a deliberate under-count discarding genuine
 paraphrase detections; truth lies between floor and published.
 
-**Per-operator lift is where the mechanism shows.** Tool-lies (O1): anchored
-detection 92.4% against a 32.7% clean base rate, 132/134 anchored cells quoting
-the injected-only value — the protocol works close to ceiling where a
-contradiction is in view. Stale context (O5): +87 points, 110/125 quoting
-stale-sheet-only content; the metadata-echo alternative explanation fails
+**Per-operator lift is where the mechanism shows.** Two populations appear in this
+paragraph and are labelled where they differ: *reviewer-bearing rows* (the five
+configurations that have a verdict-token reviewer, excluding the Magentic
+carve-out) and *all rows* (every valid cell). Tool-lies (O1): anchored detection
+92.4% on reviewer-bearing rows (93.7%, 134/143, across all rows) against a 32.7%
+clean base rate, with 132 of those 134 all-row anchored cells quoting the
+injected-only value — the protocol works close to ceiling where a contradiction
+is in view. Stale context (O5): anchored detection 87.4% on both populations
+against a wave-1 paired hard rate of 0.8%, a lift of +86.7 points, with 110 of
+the 125 all-row anchored cells quoting stale-sheet-only content; the
+metadata-echo alternative explanation fails
 (values-only adjudication moves the rate 3.5 points). False-success (O2): +18.5
 points, and every sampled anchored flag both quotes the fake claim and
 challenges it. Message alteration (O3) was already near ceiling and stays there
@@ -213,17 +220,50 @@ refunding: the published dataset contains zero RUN_ERROR cells and 39
 BASELINE_FAIL exclusions (the planner-task class wave 1 documented, here
 slightly fewer). The environment repeatedly killed long-running drivers; the
 crash-safe resume design made every interruption loss-free, and the ledger
-records every attempt. Total wave-2 pipeline spend: $33.47 on the margined
-circuit-breaker meter against a $38 cap that never tripped. Build hygiene:
-1,178-mutant gate at 0 survivors; all four suites green; an adversarial code
-review before any paid run; the QC above ran before any number was quoted.
+records every attempt.
+
+**The judge's own sandbox was breached mid-run, and the instrument caught it.**
+At batch 5 of the first judge run the pre-batch content canary fired: the judge
+model had reached the filesystem through a tool added to its harness *after* this
+benchmark's deny list was frozen, and its probe reply quoted the canary contents
+verbatim while naming the method it used. The instrument refused to run — the
+fail-loud path held. This is the benchmark's second self-catch of its own
+contamination; wave 1's canary caught a retrieval hook injecting content into
+judge calls, and wave 2's caught deny-list decay against an evolving harness. The
+closure was to stop enumerating what to forbid and pin an empty allowlist
+instead, with the deny list retained only as defense in depth. The probe itself
+was redesigned into a two-arm config-drift gate: a permissive arm with tools
+enabled must retrieve a fresh random per-run token, making the content-absence
+criterion falsifiable in the passing direction, while the restricted judge-config
+arm must not. The old refusal-phrase criterion was dropped as noise, since a
+toolless model narrates hallucinated tool transcripts roughly half the time and a
+flapping gate gets disabled. All 100 pre-fix verdicts were quarantined and the
+entire judged set re-ran from zero under the fixed instrument, following wave-1's
+535-verdict re-judge precedent; every soft-tier number in this paper comes from
+the re-run. The honest scope, stated in the code: this is config-drift regression
+detection, not a containment proof. **The standing lesson generalizes past this
+benchmark: a deny list against an evolving tool surface decays silently, so pin
+allowlists.**
+
+Total wave-2 pipeline spend: $33.47 on the margined circuit-breaker meter against
+a $38 cap that never tripped (958 paid runs; derivation and per-profile counts in
+the published spend ledger). That meter is a proxy, not a bill: the wave-1
+dashboard reconcile measured it understating real billing by roughly 15%, so the
+honest expectation is $38-40 real, and a wave-2 reconcile is still outstanding.
+The judge tier cost nothing, running on a subscription rather than a metered key.
+Build hygiene: a 1,178-mutant gate with 0 survivors (1,175 killed, 3 pre-existing
+documented timeouts; receipts in the harness `MUTATION.md`); all four suites
+green; an adversarial code review before any paid run; the QC above ran before any
+number was quoted.
 
 ## 7. Limitations
 
 Wave-1's limitations carry (one pipeline model, five seeds, judged soft tier,
 maintenance-mode AutoGen lineage). Wave-2 adds: anchor adjudication is
 deterministic but permissive at the registered edges — bounded above and below
-by the published/strict pair, with base rates disclosed; the T2 guardrail
+by the published/strict pair, with base rates disclosed, though the strict column
+is currently a stated QC-pass result rather than a committed code path, and making
+it independently reproducible is the first v0.2.1 item (QC ledger, finding 5); the T2 guardrail
 restructure makes that row's guardrail-surface acts non-comparable across waves
 (reviewer and FLAGS surfaces unaffected); the O4 landing probe can exclude cells
 wave 1 counted, so O4 rows are not strictly paired; the union headline is by
@@ -234,8 +274,11 @@ survived a mid-run tool-boundary breach (section 6).
 
 ## 8. What follows
 
-v0.2.1 (dated, post-publication): the narrow retry-reason adjudication, the O4
-flags carve-out, an anchor-collision review pass, and the six wording fixes.
+v0.2.1 (dated, post-publication): a committed strict-evidence scorer with the
+anchor-side classification persisted per cell, so the sensitivity floor becomes
+reproducible from published code rather than stated (section 7); the narrow
+retry-reason adjudication; the O4 flags carve-out; an anchor-collision review
+pass; and the six wording fixes.
 Beyond: multi-model replication, Microsoft agent-framework as the successor
 lineage, and the obvious engineering question this result raises — if one
 prompt-level requirement triples own-check detection, what does a

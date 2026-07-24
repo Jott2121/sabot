@@ -225,3 +225,36 @@ model default, uniformly. Kept for honesty rather than rewritten.
 - Calendar note (Jeff correction, same reconcile): the build is on DAY 2, not day
   13-14 — "day 12/13 QC" and "day-14 reveal" were sprint-plan slot names from the
   original 2-week plan; the whole sprint compressed into 2026-07-22..23.
+
+## 2026-07-24 — WAVE-2 FULL MATRIX + JUDGE (the published wave-2 dataset)
+
+- Runs ledgered: **958 paid pipeline runs** — 839 standard-profile + 119
+  magentic-profile (`runs/wave2/ledger-{langgraph,crewai,autogen}.jsonl`;
+  langgraph 332, crewai 338, autogen 288, counting baselines, faulted cells, and
+  every resume/re-run attempt).
+- **Margined circuit-breaker dollars: $33.47** vs the $38 shared breaker
+  (`scripts/run_wave2.py:WAVE2_CAP_USD`) — 88% of cap; the breaker never tripped.
+  Derivation, recomputable from the published ledgers:
+  839 x $0.025 + 119 x $0.105 = $20.98 + $12.50 = **$33.47**
+  (`PER_RUN_USD` in `sabot/matrix.py`, unchanged from wave 1). To reproduce:
+  sum `runs` per `profile` across the three ledger files and apply `spent_usd`.
+- **This is the margined proxy, not a bill.** The 2026-07-23 dashboard reconcile
+  above measured the margined figure UNDERSTATING real billing by ~15% for wave 1,
+  so the honest expectation for the wave-2 matrix is roughly $38-40 real. A wave-2
+  dashboard reconcile against Jeff's OpenAI usage page is **still owed**; until it
+  lands, treat $33.47 as the meter reading and not as the amount billed. Any paper
+  or scoreboard sentence quoting $33.47 must carry that caveat.
+- Judge: **$0** — the cross-lineage judge runs on the Claude Max subscription, not
+  on a metered API key (verified no `ANTHROPIC_API_KEY` in the driver environment
+  that could reroute billing).
+- Quota event: mid-run the OpenAI wallet exhausted (live-probed 429). 11 Magentic
+  baselines plus 33 short-circuited dependent cells were quarantined
+  (`runs/wave2-quarantine-429/`, 44 artifacts) and re-run clean after top-up, so
+  the published dataset carries 0 RUN_ERROR exclusions. The re-run cells are inside
+  the 958 count above.
+- Judge instrument event (no dollars, disclosed for completeness): the sandbox
+  canary fired at batch 5; 100 pre-fix verdicts were quarantined
+  (`runs/wave2-quarantine-judge/`) and the full judged set re-ran under the
+  hardened two-arm gate. See `docs/qc-wave2-2026-07-24.md` addendum.
+- Budget position: wave-1 + probe + wave-2 margined = $84.72 against the $500 hard
+  cap; ~$100 real once the ~15% under-read is applied.
