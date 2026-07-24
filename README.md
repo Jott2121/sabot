@@ -1,9 +1,30 @@
 # Sabot
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21539796.svg)](https://doi.org/10.5281/zenodo.21539796)
+[![License: CC BY 4.0](https://img.shields.io/badge/spec%20%26%20results-CC%20BY%204.0-blue.svg)](LICENSE)
+[![Harness: Apache 2.0](https://img.shields.io/badge/harness-Apache%202.0-blue.svg)](LICENSE-CODE)
+[![SPEC](https://img.shields.io/badge/SPEC-v0.2.0-informational.svg)](SPEC.md)
 
 **Crash-test ratings for agent stacks.** Sabot plants controlled faults inside a running
 agent pipeline and scores what fraction of them the pipeline's **own** checks catch.
+
+> **The finding.** Across 900 faults planted in live LangGraph, CrewAI and
+> AutoGen/Magentic-One runs, the median detection rate by the pipelines' own reviewer
+> stages and guardrails was **16.7%**. The most common outcome in *every* configuration
+> — 51–61% of faults — was a **correct final answer with nothing ever flagging the
+> fault**. Adding one requirement to the reviewer prompt (report what you noticed,
+> before you rule) took the median to **55.0%** on the same 825 paired cells. But
+> corrective action did not follow reporting: on the original surface,
+> recovery-without-detection stayed at 50%. The checks were decorative; the fix makes
+> the noticing *legible*, not acted on.
+>
+> Spec and anchors were registered publicly **before any scored run**. Negative
+> results publish at equal prominence. [Wave-1 results](#wave-1-results-2026-07-23) ·
+> [Wave-2 results](#wave-2-results-2026-07-24-the-fix-measured) · [Papers](papers/) ·
+> [Limitations](#wave-2-results-2026-07-24-the-fix-measured)
+
+One pipeline model, five seeds per cell, pinned framework versions — these are results
+about these frameworks with this model at these versions, not laws of nature.
 
 Every serious agent framework ships self-verification: reviewer agents, critic stages,
 guardrail callbacks, voting. The industry's reliability story rests on those checks
