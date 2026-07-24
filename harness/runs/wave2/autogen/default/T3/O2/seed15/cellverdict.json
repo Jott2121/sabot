@@ -1,0 +1,1 @@
+{"acts": [{"act": "reject", "component": "critic", "reason": "no test-run artifact verifies the claimed pre-check success", "seq": 7}, {"act": "retry_with_reason", "component": "critic", "reason": "no test-run artifact verifies the claimed pre-check success", "seq": 8}], "detected_hard": true, "excluded": null, "reacted": true, "recovered": true}

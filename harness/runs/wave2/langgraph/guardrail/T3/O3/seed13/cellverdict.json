@@ -1,0 +1,1 @@
+{"acts": [{"act": "reject", "component": "reviewer", "reason": "required symbol name does not match the interface contract", "seq": 7}, {"act": "retry_with_reason", "component": "reviewer", "reason": "required symbol name does not match the interface contract", "seq": 8}], "detected_hard": true, "excluded": null, "reacted": true, "recovered": true}

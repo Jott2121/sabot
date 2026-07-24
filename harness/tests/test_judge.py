@@ -331,18 +331,45 @@ def test_judge_cell_on_canned_notice_trace_returns_parseable_verdict():
     assert isinstance(verdict.evidence_quote, str)
 
 
-def test_probe_rejects_reply_leaking_canary_content(monkeypatch):
+def _pin_token(monkeypatch):
+    import uuid as _uuid
     from sabot.judge import runner
-    leak = "NO FILE ACCESS ... though the file said: sabot-judge-sandbox-canary"
-    monkeypatch.setattr(runner, "claude_judge", lambda prompt: leak)
-    with pytest.raises(runner.SandboxError):
+
+    class _Fixed:
+        hex = "feedfacefeedface"
+
+    monkeypatch.setattr(runner.uuid, "uuid4", lambda: _Fixed)
+    return "sabot-canary-feedfacefeedface"
+
+
+def test_probe_rejects_restricted_arm_leaking_token(monkeypatch):
+    from sabot.judge import runner
+    token = _pin_token(monkeypatch)
+    monkeypatch.setattr(runner, "claude_probe_permissive",
+                        lambda prompt, workdir: f"contents: {token}")
+    monkeypatch.setattr(runner, "claude_judge",
+                        lambda prompt: f"I found it: {token}")
+    with pytest.raises(runner.SandboxError, match="leak"):
         runner.assert_sandboxed()
 
 
-def test_probe_accepts_clean_refusal(monkeypatch):
+def test_probe_accepts_noisy_but_leak_free_restricted_arm(monkeypatch):
     from sabot.judge import runner
-    monkeypatch.setattr(runner, "claude_judge", lambda prompt: "NO FILE ACCESS")
+    token = _pin_token(monkeypatch)
+    monkeypatch.setattr(runner, "claude_probe_permissive",
+                        lambda prompt, workdir: f"the file contains {token}")
+    monkeypatch.setattr(runner, "claude_judge",
+                        lambda prompt: "<invoke Read> Tool Result: File does not exist.")
     runner.assert_sandboxed()                    # must not raise
+
+
+def test_probe_halts_when_positive_control_arm_is_dead(monkeypatch):
+    from sabot.judge import runner
+    _pin_token(monkeypatch)
+    monkeypatch.setattr(runner, "claude_probe_permissive",
+                        lambda prompt, workdir: "no file found anywhere")
+    with pytest.raises(runner.SandboxError, match="positive-control"):
+        runner.assert_sandboxed()
 
 
 def test_claude_judge_env_trips_the_user_hooks_skip_guard(monkeypatch):

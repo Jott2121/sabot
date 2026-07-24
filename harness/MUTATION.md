@@ -509,3 +509,32 @@ None outstanding. No survivor was judged equivalent for the three new modules; n
 source module was modified and no test was weakened or deleted to dodge a mutant.
 Phases 2-3's eight files and their documented 3-timeout / 2-resolved-equivalent history
 are unchanged.
+
+# Wave 2: sabot/wave2.py + recorder seam (v0.2.0 build)
+
+Date: 2026-07-23
+Scope added: `sabot/wave2.py` (anchors, FLAGS scan, carve-out, T2 structural check,
+O4 landing probe). The recorder's additive `model_id` kwarg regenerated
+`recorder.py` mutants.
+
+## Initial run
+
+1,178 mutants total (959 carried + 219 new): 1,147 killed, 28 survived
+(25 in wave2.py: scan_trace_flags_v2 9, o4_landed 11, t2_structural_check 5;
+3 in recorder.agent_msg's new model_id branch — untested in the base venv because
+the adapter suites importorskip there), 3 timeout (the documented rubric
+infinite-loop catches, unchanged).
+
+## Hardening (12 tests appended to tests/test_wave2.py)
+
+Survivor classes killed by construction: dict-default variants (missing
+events/seq/payload keys), continue->break order dependence (multi-event fixtures),
+the seq at-boundary `<` vs `<=` rule (flag at exactly injection_seq counts),
+o4_landed's default-injection and malformed-event paths, exact reason-string and
+exact-word-limit pins for t2_structural_check, and exact payload-dict equality for
+recorder.agent_msg with/without model_id.
+
+## Final run
+
+1,178 mutants: **1,175 killed, 0 survivors**, 3 timeout (rubric, pre-existing,
+documented). Wave-2 pure logic enters the paid run mutation-clean.

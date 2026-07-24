@@ -308,17 +308,20 @@ class _RunListener(BaseEventListener):
     framework-sourced trail: per-agent turns, per-tool calls the harness didn't already
     wrap, and guardrail pass/fail/retry for the guardrail config."""
 
-    def __init__(self, rec: TraceRecorder):
+    def __init__(self, rec: TraceRecorder, model_id_of=None):
         self._rec = rec
+        self._model_id_of = model_id_of
         super().__init__()
 
     def setup_listeners(self, bus) -> None:
         rec = self._rec
+        model_id_of = self._model_id_of
 
         @bus.on(AgentExecutionCompletedEvent)
         def _on_agent_done(source, event):
             role = getattr(event.agent, "role", "agent")
-            rec.agent_msg(role, event.output)
+            model_id = model_id_of(event.agent) if model_id_of else None
+            rec.agent_msg(role, event.output, model_id=model_id)
 
         @bus.on(TaskCompletedEvent)
         def _on_task_done(source, event):
@@ -366,6 +369,12 @@ class CrewAIAdapter:
             return shared, shared
         return self._llm_factory(worker_id), self._llm_factory(PIPELINE_MODEL)
 
+    def _make_listener(self, rec: TraceRecorder) -> _RunListener:
+        """Trace-listener factory. Seam for the wave-2 subclass to attach a model-id
+        resolver (SPEC 10.7.2 O4 landing probe) without reimplementing the frozen run
+        path; the base returns the wave-1 listener unchanged (no model_id recorded)."""
+        return _RunListener(rec)
+
     def run(self, cell: Cell) -> RunResult:
         rec = TraceRecorder(run_id=f"{cell.framework}-{cell.task}-{cell.config}-"
                                    f"{cell.operator or 'baseline'}-s{cell.seed}",
@@ -379,7 +388,7 @@ class CrewAIAdapter:
             raise NotImplementedError(f"unknown task: {cell.task}")
         try:
             with crewai_event_bus.scoped_handlers():
-                _RunListener(rec)
+                self._make_listener(rec)
                 return fn(cell, rec, inj)
         except Exception as exc:                      # any framework blow-up = RUN_ERROR
             return RunResult(trace=rec.trace, task_passed=False,

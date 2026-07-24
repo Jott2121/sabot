@@ -11,3 +11,7 @@ mutants/
 mutmut-stats.json
 *.egg-info/
 .venv-*/
+# runs/ is ignored in the private working repository so that live run output never
+# lands in a commit by accident. The published evidence corpus under runs/ is
+# force-added deliberately at each reveal, and is tracked here.
+runs/

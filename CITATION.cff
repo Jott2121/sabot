@@ -8,7 +8,8 @@ repository-code: "https://github.com/Jott2121/sabot"
 url: "https://github.com/Jott2121/sabot"
 license: CC-BY-4.0
 version: v0.2.0
-date-released: "2026-07-23"
+date-released: "2026-07-24"
+abstract: "Sabot plants controlled faults inside running multi-agent pipelines and scores what fraction the pipeline's own checks catch. Wave 1 (900 faults; LangGraph, CrewAI, AutoGen/Magentic-One) measured a median hard-tier detection rate of 16.7%, with recovery-without-detection the dominant outcome in every row. Wave 2 (825 paired faults) measured a pre-registered anomaly-first reporting protocol that raised the median to 55.0%, while showing that reporting is not reacting. Both preprints, the frozen specification, the harness, and the full raw-trace corpus are published here."
 keywords:
   - multi-agent systems
   - fault injection

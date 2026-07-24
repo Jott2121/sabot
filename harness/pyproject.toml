@@ -17,7 +17,10 @@ source_paths = [
     "sabot/checks.py", "sabot/serde.py", "sabot/adapters/recorder.py",
     "sabot/adapters/verdict.py", "sabot/judge/rubric.py",
     "sabot/matrix.py", "sabot/judge/notes.py", "sabot/scoreboard.py",
+    "sabot/probe.py", "sabot/wave2.py",
 ]
+# sabot/probe.py (wave-2 anomaly-first probe, pure logic) gated pre-spend on this
+# branch: 91/91 mutants killed, 0 survivors, 0 equivalents (2026-07-23).
 # also_copy = ["sabot"]: mutmut only copies exactly the files listed in
 # source_paths into its sandboxed mutants/ tree (it does not walk the rest of
 # the package). Several of the newly-scoped Phase-3 files import sibling

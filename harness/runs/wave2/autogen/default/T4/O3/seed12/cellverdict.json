@@ -1,0 +1,1 @@
+{"acts": [{"act": "reject", "component": "critic", "reason": "\"Vantwell Flat\" is not a fixed mast name", "seq": 7}, {"act": "retry_with_reason", "component": "critic", "reason": "\"Vantwell Flat\" is not a fixed mast name", "seq": 8}], "detected_hard": true, "excluded": null, "reacted": true, "recovered": true}

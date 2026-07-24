@@ -242,6 +242,12 @@ def _make_emit_node(rec: TraceRecorder, injector: _Injector, task_id: str,
 
 
 class LangGraphAdapter:
+    # Recorder-construction seam: run() builds its TraceRecorder through this class
+    # attribute so the wave-2 subclass (SPEC 10.7.2 O4 landing probe) can substitute a
+    # model-id-stamping recorder. Base value = TraceRecorder: behavior is byte-identical
+    # when the seam is unused.
+    _recorder_cls = TraceRecorder
+
     def __init__(self, tasks_dir: Path, model_factory=None):
         self._tasks_dir = tasks_dir
         self._model_factory = model_factory or _default_model_factory
@@ -261,10 +267,11 @@ class LangGraphAdapter:
         return self._model_factory(worker_id), self._model_factory(PIPELINE_MODEL)
 
     def run(self, cell: Cell) -> RunResult:
-        rec = TraceRecorder(run_id=f"{cell.framework}-{cell.task}-{cell.config}-"
-                                   f"{cell.operator or 'baseline'}-s{cell.seed}",
-                            framework=cell.framework, task=cell.task,
-                            config=cell.config, operator=cell.operator, seed=cell.seed)
+        rec = self._recorder_cls(run_id=f"{cell.framework}-{cell.task}-{cell.config}-"
+                                        f"{cell.operator or 'baseline'}-s{cell.seed}",
+                                 framework=cell.framework, task=cell.task,
+                                 config=cell.config, operator=cell.operator,
+                                 seed=cell.seed)
         inj = {"seq": None, "verified": False}      # survives the exception path below
         dispatch = {"T1": self._run_t1, "T2": self._run_t2, "T3": self._run_t3,
                    "T4": self._run_t4, "T5": self._run_t5}

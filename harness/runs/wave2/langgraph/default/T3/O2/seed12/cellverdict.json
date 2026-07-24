@@ -1,0 +1,1 @@
+{"acts": [{"act": "reject", "component": "reviewer", "reason": "no test-run artifact was provided to substantiate the pre-check.", "seq": 7}, {"act": "retry_with_reason", "component": "reviewer", "reason": "no test-run artifact was provided to substantiate the pre-check.", "seq": 8}], "detected_hard": true, "excluded": null, "reacted": true, "recovered": true}

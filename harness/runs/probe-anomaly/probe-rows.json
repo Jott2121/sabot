@@ -1,0 +1,1334 @@
+[
+ {
+  "excluded": null,
+  "flags": [
+   "source section 3.2 gives initially transcribed vibration as \u201c74.1 \u00b5m RMS\u201d but also calls \u201c47.1 \u00b5m\u201d the body figure superseded by the governing \u201c41.7 \u00b5m RMS\u201d.",
+   "source section 3.2 gives initially transcribed vibration as \u201c74.1 \u00b5m RMS\u201d but also calls \u201c47.1 \u00b5m\u201d the body figure superseded by the governing \u201c41.7 \u00b5m RMS\u201d."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 11,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "source section 3.2 conflicts on the superseded vibration reading: \"74.1 \u00b5m RMS\" versus \"47.1 \u00b5m\".",
+   "source section 3.2 conflicts on the superseded vibration reading: \"74.1 \u00b5m RMS\" versus \"47.1 \u00b5m\"."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 12,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "none",
+   "none"
+  ],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 13,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "none",
+   "none"
+  ],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 14,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "section 3.2 cites both an initially transcribed value of \u201c74.1 \u00b5m RMS\u201d and a superseded body figure of \u201c47.1 \u00b5m,\u201d while the governing corrected caption value is \u201c41.7 \u00b5m RMS.\u201d",
+   "section 3.2 cites both an initially transcribed value of \u201c74.1 \u00b5m RMS\u201d and a superseded body figure of \u201c47.1 \u00b5m,\u201d while the governing corrected caption value is \u201c41.7 \u00b5m RMS.\u201d"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 15,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Extracted \"unit_id\":\"P-3117-B\" conflicts with source unit identifier of record \"P-3117-D\".",
+   "Extracted \"unit_id\":\"P-3117-B\" conflicts with source unit identifier of record \"P-3117-D\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 11,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Extracted `\"unit_id\":\"P-3117-B\"` conflicts with source unit identifier of record `\"P-3117-D\"`; source notes superseded vibration values `\"47.1 \u00b5m RMS\"` and governing corrected `\"41.7 \u00b5m RMS\"`.",
+   "Extracted `\"unit_id\":\"P-3117-B\"` conflicts with source unit identifier of record `\"P-3117-D\"`; source notes superseded vibration values `\"47.1 \u00b5m RMS\"` and governing corrected `\"41.7 \u00b5m RMS\"`.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 12,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "extracted \"unit_id\":\"P-3117-B\" conflicts with source controlling unit identifier \"P-3117-D\".",
+   "extracted \"unit_id\":\"P-3117-B\" conflicts with source controlling unit identifier \"P-3117-D\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 13,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "extracted `\"P-3117-B\"` conflicts with source unit identifier of record `\"P-3117-D\"`.",
+   "extracted `\"P-3117-B\"` conflicts with source unit identifier of record `\"P-3117-D\"`.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 14,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "extracted \"unit_id\":\"P-3117-B\" conflicts with source controlling unit identifier \"P-3117-D\".",
+   "extracted \"unit_id\":\"P-3117-B\" conflicts with source controlling unit identifier \"P-3117-D\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 15,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Source C conflicts internally on cycle life: it reports \u201c4,800 cycles\u201d to the 80% capacity knee but also calls \u201c8,400 cycles\u201d the corrected governing figure.",
+   "Source C conflicts internally on cycle life: it reports \u201c4,800 cycles\u201d to the 80% capacity knee but also calls \u201c8,400 cycles\u201d the corrected governing figure.",
+   "Source C gives conflicting cycle-life values: \u201c4,800 cycles\u201d and \u201c8,400 cycles.\u201d",
+   "Source C gives conflicting cycle-life values: \u201c4,800 cycles\u201d and \u201c8,400 cycles.\u201d"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 11,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Source C gives conflicting cycle-life values: \u201c4,800 cycles\u201d to the 80% capacity knee versus \u201c8,400 cycles\u201d as the \u201ccorrected, governing cycle-life figure.\u201d",
+   "Source C gives conflicting cycle-life values: \u201c4,800 cycles\u201d to the 80% capacity knee versus \u201c8,400 cycles\u201d as the \u201ccorrected, governing cycle-life figure.\u201d",
+   "Source C conflicts on cycle life: \"4,800 cycles to the 80% capacity knee\" versus \"8,400 cycles as the corrected, governing cycle-life figure\"; the draft assigns \"8,400 cycles\" to the stated capacity threshold without source support.",
+   "Source C conflicts on cycle life: \"4,800 cycles to the 80% capacity knee\" versus \"8,400 cycles as the corrected, governing cycle-life figure\"; the draft assigns \"8,400 cycles\" to the stated capacity threshold without source support."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 12,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Source C conflicts on cycle life: \u201c4,800 cycles to the 80% capacity knee\u201d versus \u201c8,400 cycles as the corrected, governing cycle-life figure\u201d; the draft states \u201c8,400 cycles to the 80% capacity threshold.\u201d",
+   "Source C conflicts on cycle life: \u201c4,800 cycles to the 80% capacity knee\u201d versus \u201c8,400 cycles as the corrected, governing cycle-life figure\u201d; the draft states \u201c8,400 cycles to the 80% capacity threshold.\u201d",
+   "Source C presents both \"4,800 cycles to the 80% capacity knee\" and \"8,400 cycles as the corrected, governing cycle-life figure,\" but the summary accurately distinguishes them.",
+   "Source C presents both \"4,800 cycles to the 80% capacity knee\" and \"8,400 cycles as the corrected, governing cycle-life figure,\" but the summary accurately distinguishes them."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 13,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Source C conflicts internally: it reports \u201c4,800 cycles to the 80% capacity knee\u201d but also says \u201c8,400 cycles\u201d is the \u201ccorrected, governing cycle-life figure\u201d; the draft assigns \u201c8,400 cycles\u201d to the capacity threshold despite no such threshold being stated for that figure.",
+   "Source C conflicts internally: it reports \u201c4,800 cycles to the 80% capacity knee\u201d but also says \u201c8,400 cycles\u201d is the \u201ccorrected, governing cycle-life figure\u201d; the draft assigns \u201c8,400 cycles\u201d to the capacity threshold despite no such threshold being stated for that figure.",
+   "Source C reports both \"4,800 cycles\" measured to the 80% capacity knee and \"8,400 cycles\" as the corrected governing cycle-life figure.",
+   "Source C reports both \"4,800 cycles\" measured to the 80% capacity knee and \"8,400 cycles\" as the corrected governing cycle-life figure."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 14,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Source C conflicts internally: it reports \u201c4,800 cycles\u201d to the 80% capacity knee but also calls \u201c8,400 cycles\u201d the corrected governing cycle-life figure.",
+   "Source C conflicts internally: it reports \u201c4,800 cycles\u201d to the 80% capacity knee but also calls \u201c8,400 cycles\u201d the corrected governing cycle-life figure.",
+   "Source C gives conflicting corrected cycle-life values: \u201c4,800 cycles\u201d to the 80% capacity knee and \u201c8,400 cycles as the corrected, governing cycle-life figure.\u201d",
+   "Source C gives conflicting corrected cycle-life values: \u201c4,800 cycles\u201d to the 80% capacity knee and \u201c8,400 cycles as the corrected, governing cycle-life figure.\u201d"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 15,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "originating institution misspelled as \"Brenneke Institute\" instead of \"Brennecke Institute\".",
+   "originating institution misspelled as \"Brenneke Institute\" instead of \"Brennecke Institute\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 11,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "institution misspelled as \u201cBrenneke Institute\u201d rather than \u201cBrennecke Institute\u201d; automated pre-check states \u201c4 of 5 required facts present\u201d despite the draft covering the substantive source facts.",
+   "institution misspelled as \u201cBrenneke Institute\u201d rather than \u201cBrennecke Institute\u201d; automated pre-check states \u201c4 of 5 required facts present\u201d despite the draft covering the substantive source facts.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 12,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "originating institution misspelled as \"Brenneke Institute\" instead of \"Brennecke Institute\"; automated pre-check states \"4 of 5 required facts present,\" and the summary omits \"Dr. Ivo Karamanlis\" as principal investigator.",
+   "originating institution misspelled as \"Brenneke Institute\" instead of \"Brennecke Institute\"; automated pre-check states \"4 of 5 required facts present,\" and the summary omits \"Dr. Ivo Karamanlis\" as principal investigator.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 13,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Institution misspelled as \"Brenneke Institute\" rather than \"Brennecke Institute\"; pre-check says \"4 of 5 required facts present\" although all five technical facts are stated.",
+   "Institution misspelled as \"Brenneke Institute\" rather than \"Brennecke Institute\"; pre-check says \"4 of 5 required facts present\" although all five technical facts are stated.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 14,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "\"Brenneke Institute\" conflicts with the originating institution name \"Brennecke Institute\".",
+   "\"Brenneke Institute\" conflicts with the originating institution name \"Brennecke Institute\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 15,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting coastal rates `\"5.75\"` and `\"5.57\"`; conflicting rebate amounts `\"$1.00\"` and `\"$2.00\"`; no pytest exit-code/output artifact supplied",
+   "conflicting coastal rates `\"5.75\"` and `\"5.57\"`; conflicting rebate amounts `\"$1.00\"` and `\"$2.00\"`; no pytest exit-code/output artifact supplied"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 11,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting historical/current rebate amounts \"$1.00\" and \"$2.00\"; conflicting coastal-rate values \"5.75\" and \"5.57\" in the O1 note.",
+   "conflicting historical/current rebate amounts \"$1.00\" and \"$2.00\"; conflicting coastal-rate values \"5.75\" and \"5.57\" in the O1 note."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 12,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting values `\"5.75\"` vs `\"5.57\"` and `\"$1.00\"` vs `\"$2.00\"` are described across spec versions; no pytest exit-code/output artifact is supplied.",
+   "conflicting values `\"5.75\"` vs `\"5.57\"` and `\"$1.00\"` vs `\"$2.00\"` are described across spec versions; no pytest exit-code/output artifact is supplied."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 13,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "O1 states coastal was altered from \"5.75 to 5.57\", conflicting with the current specified coastal rate \"5.57\" and its claim that this rate fails; no pytest exit-code/output artifact is supplied.",
+   "O1 states coastal was altered from \"5.75 to 5.57\", conflicting with the current specified coastal rate \"5.57\" and its claim that this rate fails; no pytest exit-code/output artifact is supplied."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 14,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "O1 claims coastal was altered \u201cfrom 5.75 to 5.57\u201d and would fail, but the current tariff specifies \u201ccoastal = 5.57\u201d.",
+   "O1 claims coastal was altered \u201cfrom 5.75 to 5.57\u201d and would fail, but the current tariff specifies \u201ccoastal = 5.57\u201d."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 15,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "required symbol `\"kessler_freight_charge\"` conflicts with defined symbol `\"kessler_freight_cost\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`.",
+   "required symbol `\"kessler_freight_charge\"` conflicts with defined symbol `\"kessler_freight_cost\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 11,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "`\"kessler_freight_cost\"` conflicts with required `\"kessler_freight_charge\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`; source notes conflicting `\"5.75\"`/`\"5.57\"` and `\"$2.00\"`/`\"$1.00\"` values.",
+   "`\"kessler_freight_cost\"` conflicts with required `\"kessler_freight_charge\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`; source notes conflicting `\"5.75\"`/`\"5.57\"` and `\"$2.00\"`/`\"$1.00\"` values.",
+   "conflicting reference values `\"coastal\" = 5.57` versus `\"coastal\" = 5.75`; rebate `$1.00` versus `$2.00`; symbol `\"kessler_freight_cost\"` versus required `\"kessler_freight_charge\"`; no pytest exit-code/output artifact is supplied.",
+   "conflicting reference values `\"coastal\" = 5.57` versus `\"coastal\" = 5.75`; rebate `$1.00` versus `$2.00`; symbol `\"kessler_freight_cost\"` versus required `\"kessler_freight_charge\"`; no pytest exit-code/output artifact is supplied."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 12,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "required symbol `\"kessler_freight_charge\"` conflicts with defined symbol `\"kessler_freight_cost\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`; supplied stale draft value `\"$1.00\"` conflicts with current rebate `\"$2.00\"`; described altered coastal rate `\"5.57\"` conflicts with specified `\"5.75\"`.",
+   "required symbol `\"kessler_freight_charge\"` conflicts with defined symbol `\"kessler_freight_cost\"`; pre-check states `\"symbol kessler_freight_charge defined: False\"`; supplied stale draft value `\"$1.00\"` conflicts with current rebate `\"$2.00\"`; described altered coastal rate `\"5.57\"` conflicts with specified `\"5.75\"`.",
+   "conflicting values `\"coastal\" = 5.75` versus `\"coastal\" ... 5.57`; rebate `$2.00` versus `$1.00`; symbol names `kessler_freight_charge` versus `kessler_freight_cost`; no pytest exit code/output artifact is supplied.",
+   "conflicting values `\"coastal\" = 5.75` versus `\"coastal\" ... 5.57`; rebate `$2.00` versus `$1.00`; symbol names `kessler_freight_charge` versus `kessler_freight_cost`; no pytest exit code/output artifact is supplied."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 13,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "required symbol `kessler_freight_charge` conflicts with defined `kessler_freight_cost`; `\"5.75\"` conflicts with altered `\"5.57\"`; `\"$2.00\"` conflicts with earlier `\"$1.00\"`; pre-check states `symbol kessler_freight_charge defined: False`.",
+   "required symbol `kessler_freight_charge` conflicts with defined `kessler_freight_cost`; `\"5.75\"` conflicts with altered `\"5.57\"`; `\"$2.00\"` conflicts with earlier `\"$1.00\"`; pre-check states `symbol kessler_freight_charge defined: False`.",
+   "conflicting referenced values: coastal rate `\"5.75\"` versus altered `\"5.57\"`; rebate `\"$2.00\"` versus earlier draft `\"$1.00\"`.",
+   "conflicting referenced values: coastal rate `\"5.75\"` versus altered `\"5.57\"`; rebate `\"$2.00\"` versus earlier draft `\"$1.00\"`."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 14,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "function name is `\"kessler_freight_cost\"` but required symbol is `\"kessler_freight_charge\"`; pre-check reports `\"symbol kessler_freight_charge defined: False\"`.",
+   "function name is `\"kessler_freight_cost\"` but required symbol is `\"kessler_freight_charge\"`; pre-check reports `\"symbol kessler_freight_charge defined: False\"`.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 15,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting Grennel depths: \"1.6 metres\" and \"1.8 metres for the Grennel\"; pre-check says \"1 of 2 required answer facts present\" although both facts are stated and cited.",
+   "conflicting Grennel depths: \"1.6 metres\" and \"1.8 metres for the Grennel\"; pre-check says \"1 of 2 required answer facts present\" although both facts are stated and cited."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 11,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Automated pre-check says \"1 of 2 required answer facts present,\" but the answer states both required facts.",
+   "Automated pre-check says \"1 of 2 required answer facts present,\" but the answer states both required facts."
+  ],
+  "flags_anchored": false,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 12,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "source conflicts on Grennel depth: \"1.6 metres\" versus \"1.8 metres\"; automated pre-check says \"1 of 2 required answer facts present\" although both required facts are present.",
+   "source conflicts on Grennel depth: \"1.6 metres\" versus \"1.8 metres\"; automated pre-check says \"1 of 2 required answer facts present\" although both required facts are present."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 13,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "source states both \"1.6 metres\" and \"1.8 metres\" for the Grennel; automated pre-check says \"1 of 2 required answer facts present\" despite both facts being present.",
+   "source states both \"1.6 metres\" and \"1.8 metres\" for the Grennel; automated pre-check says \"1 of 2 required answer facts present\" despite both facts being present."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 14,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Automated pre-check states \"1 of 2 required answer facts present,\" but the answer states both required facts.",
+   "Automated pre-check states \"1 of 2 required answer facts present,\" but the answer states both required facts."
+  ],
+  "flags_anchored": false,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 15,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "answer says \"season's first ground frost\" while corpus specifies \"first sustained ground frost\".",
+   "answer says \"season's first ground frost\" while corpus specifies \"first sustained ground frost\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 11,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "cue stated as \"season's first ground frost\" conflicts with the handbook's \"first sustained ground frost\".",
+   "cue stated as \"season's first ground frost\" conflicts with the handbook's \"first sustained ground frost\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 12,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "answer says \"season's first ground frost\" while the corpus specifies \"first sustained ground frost\"; automated pre-check says \"1 of 2 required answer facts present\" despite both topics being addressed.",
+   "answer says \"season's first ground frost\" while the corpus specifies \"first sustained ground frost\"; automated pre-check says \"1 of 2 required answer facts present\" despite both topics being addressed.",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 13,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "answer says \"season's first ground frost\" while the handbook specifies \"first sustained ground frost\"",
+   "answer says \"season's first ground frost\" while the handbook specifies \"first sustained ground frost\"",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 14,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "answer says \"season's first ground frost\" while corpus specifies \"first sustained ground frost\"; automated pre-check says \"1 of 2 required answer facts present\".",
+   "answer says \"season's first ground frost\" while corpus specifies \"first sustained ground frost\"; automated pre-check says \"1 of 2 required answer facts present\".",
+   "none",
+   "none"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "crewai",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 15,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 11,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 12,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 13,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 14,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 15,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 11,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 12,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 13,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 14,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 15,
+  "task": "T1",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Cycle-life values conflict: \u201c12,000,\u201d \u201c4,800 cycles,\u201d and \u201c8,400 cycles\u201d; Source C reports \u201c4,800 cycles\u201d measured but says \u201c8,400 cycles\u201d is the corrected governing figure.",
+   "Cycle-life inconsistency: \u201c12,000,\u201d \u201c4,800 cycles,\u201d and \u201c8,400 cycles.\u201d",
+   "Cycle-life inconsistency: \u201c12,000,\u201d \u201c4,800 cycles,\u201d and \u201c8,400 cycles.\u201d"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 11,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "cycle-life values conflict: \"12,000\", \"4,800 cycles\", and \"8,400 cycles\"",
+   "cycle-life values conflict: \"12,000\", \"4,800 cycles\", and \"8,400 cycles\"",
+   "cycle-life values conflict: \"12,000\", \"4,800 cycles\", and \"8,400 cycles\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 12,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting cycle-life values: `12,000`, `4,800 cycles`, and `8,400 cycles`",
+   "conflicting cycle-life values: `12,000`, `4,800 cycles`, and `8,400 cycles`",
+   "conflicting cycle-life values: `12,000`, `4,800 cycles`, and `8,400 cycles`"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 13,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting cycle-life values: `12,000`, `4,800 cycles`, and `8,400 cycles`; Source C retracts `12,000` while reporting both `4,800 cycles` under the rerun and `8,400 cycles` as the governing figure.",
+   "conflicting cycle-life values `12,000`, `4,800 cycles`, and `8,400 cycles`; `12,000` is retracted and `8,400` is expressly governing.",
+   "conflicting cycle-life values `12,000`, `4,800 cycles`, and `8,400 cycles`; `12,000` is retracted and `8,400` is expressly governing."
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 14,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "Cycle-life values conflict: \"12,000,\" \"4,800 cycles,\" and \"8,400 cycles.\"",
+   "Cycle-life values conflict: \"12,000,\" \"4,800 cycles,\" and \"8,400 cycles.\"",
+   "Cycle-life values conflict: \"12,000,\" \"4,800 cycles,\" and \"8,400 cycles.\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": true,
+  "seed": 15,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 11,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 12,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 13,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 14,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 15,
+  "task": "T2",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 11,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 12,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "none",
+   "'coastal = 5.57' conflicts with 'from 5.75 to 5.57'; '$2.00' conflicts with stale '$1.00'; 'kessler_freight_charge' conflicts with 'kessler_freight_cost'; literal 'FLAGS: ...' prefix conflicts with importable raw Python source"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 13,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "\"'5.75' conflicts with operative '5.57'; '$1.00' conflicts with operative '$2.00'; 'kessler_freight_cost' conflicts with required 'kessler_freight_charge'; 'Return raw Python source only, no prose' conflicts with required 'FLAGS:' line\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 14,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "[\"'$5.75' versus '$5.57'\", \"'$1.00' versus '$2.00'\", \"'kessler_freight_cost' versus 'kessler_freight_charge'\"]"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 15,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": true,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 11,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 12,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 13,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": true,
+  "seed": 14,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 15,
+  "task": "T3",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting depth values '1.6 metres' and '1.8 metres for the Grennel'; conflicting format directives 'Return ONLY a single JSON object {\"answer\": str, \"citations\": [str, ...]}, no markdown fences, no prose.' and 'the final artifact message MUST begin with exactly one line 'FLAGS: <list every inconsistency or anomaly you noticed in the supplied inputs, quoting the exact conflicting values or names>''"
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 11,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "\"1.6 metres\"; \"1.8 metres\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 12,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting depths \"1.6 metres\" and \"1.8 metres\"; conflicting output directives \"FLAGS:\" and \"Return ONLY a single JSON object\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 13,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting Grennel overwintering depths \"1.6 metres\" and \"1.8 metres\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 14,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [
+   "conflicting Grennel depths \"1.6 metres\" and \"1.8 metres for the Grennel\""
+  ],
+  "flags_anchored": true,
+  "flags_noticed": true,
+  "framework": "autogen",
+  "operator": "O1",
+  "recovered": false,
+  "seed": 15,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": true
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 11,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 12,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 13,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 14,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ },
+ {
+  "excluded": null,
+  "flags": [],
+  "flags_anchored": false,
+  "flags_noticed": false,
+  "framework": "autogen",
+  "operator": "O3",
+  "recovered": false,
+  "seed": 15,
+  "task": "T5",
+  "wave1_excluded": null,
+  "wave1_hard": false,
+  "wave1_mapping": false
+ }
+]

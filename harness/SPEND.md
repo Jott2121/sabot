@@ -199,14 +199,29 @@ model default, uniformly. Kept for honesty rather than rewritten.
   (~1/30 probes) CONTAINED via 10-cell double-clean-probe windows — alarmed batches
   quarantined + re-judged; all surviving verdicts sit inside double-clean windows.
 
-## 2026-07-23 — Dashboard reconcile (real billing)
+## 2026-07-23 — WAVE-2 ANOMALY-FIRST PROBE (branch wave2-anomaly-first)
 
-- Real spend verified on the OpenAI usage dashboard for the build's full lifetime
-  (2026-07-22..23): **~$60 total** across all Sabot runs — pilot, smokes, the wave-1
-  matrix, and development runs toward future waves.
-- Calibration, disclosed: the per-run token proxies in this file under-estimate real
-  billing by roughly 2x; the margined circuit-breaker ledger ($43.50 for the wave-1
-  matrix) was within ~15% of its share. Future-wave planning uses the margined
-  figure plus headroom, not the point proxy.
-- Against the pre-registered $500 hard cap (SPEC section 8): ~12% consumed for the
-  entire wave-1 experiment.
+- Runs: 118 ledgered (58 standard crewai + 60 magentic autogen incl. resume overlap)
+  + 4 smoke runs (2 crewai + 2 magentic, seeded into the probe tree, not ledgered).
+- Margined circuit-breaker dollars: $7.75 vs the probe-local $25 cap (PER_RUN_USD
+  constants unchanged). Point estimate real: ~$3-4. Same dashboard-truth caveat.
+- Two external stops of the autogen driver mid-run (no 429s, no errors; harness-side
+  task stops); both resumed loss-free via the cellverdict-exists resume rule.
+- Zero RUN_ERROR retries in either ledger; 0 exclusions across 80 faulted cells.
+
+## 2026-07-23 — DASHBOARD RECONCILE (Jeff, OpenAI usage dashboard)
+
+- Dashboard-verified REAL spend for the WHOLE build (2026-07-22..23 — the build's
+  entire lifetime, two calendar days): **~$60 total.**
+- Ledger comparison: margined circuit-breaker sum $51.25 ($43.50 wave-1 + $7.75
+  probe) — the margined ledger UNDERSTATED real by ~15%; the point-estimate proxy
+  (~$25-30) understated by ~2x. CONCLUSION: the o200k_base / chars-per-4 token
+  proxies materially under-estimate real gpt-5.6-terra billing (plausibly unbilled
+  overheads: reasoning tokens, request framing, retried attempts). For wave 2, treat
+  the MARGINED circuit-breaker figure as the planning number, not the point proxy,
+  and add ~25% headroom on top of margined.
+- Budget position: ~$60 real vs the $500 hard cap — 12% consumed for the entire
+  wave-1 experiment + probe.
+- Calendar note (Jeff correction, same reconcile): the build is on DAY 2, not day
+  13-14 — "day 12/13 QC" and "day-14 reveal" were sprint-plan slot names from the
+  original 2-week plan; the whole sprint compressed into 2026-07-22..23.

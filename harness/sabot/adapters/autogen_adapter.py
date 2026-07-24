@@ -384,10 +384,14 @@ class _Injector:
 
 
 async def _run_stage(agent, agent_source_name: str, task_text: str, rec: TraceRecorder, *,
-                     approve_token: str | None):
+                     approve_token: str | None, record=None, model_id: str | None = None):
     """One per-stage single-participant `RoundRobinGroupChat` round trip. See module
     docstring's "Structural deviation" section for why every stage (not only O3's) is run
     this way.
+
+    `record` is the wave-2 agent-msg seam (SPEC 10.7.2): when supplied it receives
+    `(rec, source, text, model_id)` so a subclass can tag the message with the model id
+    that served the stage. When absent the frozen `rec.agent_msg` path is used verbatim.
 
     `MaxMessageTermination` counts the SEED task message itself (confirmed live: with
     `output_task_messages=True`, the default, the initial `task=` string is fed through the
@@ -418,7 +422,10 @@ async def _run_stage(agent, agent_source_name: str, task_text: str, rec: TraceRe
             continue
         if isinstance(event, TextMessage) and event.source == agent_source_name:
             text = event.content
-            rec.agent_msg(agent_source_name, text)
+            if record is not None:
+                record(rec, agent_source_name, text, model_id)
+            else:
+                rec.agent_msg(agent_source_name, text)
     return text, stop_reason
 
 
@@ -434,12 +441,30 @@ class AutoGenAdapter:
         adapters' single-shared-model pattern: offline tests drive a
         `ReplayChatCompletionClient` with ONE fifo response queue per constructed instance,
         so minting a second instance unconditionally would silently hand the critic its own
-        fresh queue instead of the next queued response."""
+        fresh queue instead of the next queued response.
+
+        Returns `(worker_client, critic_client, worker_model_id)`; the third element is the
+        wave-2 O4 landing-probe input (SPEC 10.7.2) — the model id actually built for the
+        worker stage, `PIPELINE_MODEL` unless O4 downgraded it."""
         worker_id = injector.model_id(agent, PIPELINE_MODEL)
         if worker_id == PIPELINE_MODEL:
             shared = self._client_factory(PIPELINE_MODEL)
-            return shared, shared
-        return self._client_factory(worker_id), self._client_factory(PIPELINE_MODEL)
+            return shared, shared, worker_id
+        return self._client_factory(worker_id), self._client_factory(PIPELINE_MODEL), worker_id
+
+    def _record_agent_msg(self, rec: TraceRecorder, agent: str, text: str,
+                          model_id: str | None = None) -> int:
+        """Wave-2 agent-msg seam (SPEC 10.7.2, O4 landing probe). Base behavior ignores
+        `model_id` and defers to the frozen recorder, so every wave-1 agent-msg payload is
+        byte-identical; a wave-2 subclass overrides this to tag the message with the model
+        id that served the stage."""
+        return rec.agent_msg(agent, text)
+
+    def _stop_reason_blocks(self, stop_reason: str) -> bool:
+        """Wave-2 block-surface seam (SPEC 10.7.3). Base behavior is the frozen wave-1
+        published anomaly-token rule (`_ANOMALY_STOP_RE`); a wave-2 subclass tightens it to
+        the exact published contract without touching this file's behavior."""
+        return bool(_ANOMALY_STOP_RE.search(stop_reason))
 
     def run(self, cell: Cell) -> RunResult:
         return asyncio.run(self._arun(cell))
@@ -472,7 +497,7 @@ class AutoGenAdapter:
         document = await injector.load(agent_name, "load_document", source_text)
         document = injector.context(agent_name, "load_context", document)
 
-        worker_client, critic_client = self._build_clients(injector, agent_name)
+        worker_client, critic_client, worker_model_id = self._build_clients(injector, agent_name)
         worker_agent = AssistantAgent(name=agent_name, model_client=worker_client,
                                       system_message=worker_sys)
         critic_agent = AssistantAgent(name="critic", model_client=critic_client,
@@ -485,7 +510,9 @@ class AutoGenAdapter:
         while True:
             worker_task = build_worker_desc(document, reason)
             worker_text, stop_reason = await _run_stage(worker_agent, agent_name, worker_task,
-                                                        rec, approve_token=None)
+                                                        rec, approve_token=None,
+                                                        record=self._record_agent_msg,
+                                                        model_id=worker_model_id)
             last_stop_reason = stop_reason
             draft = injector.handoff(agent_name, "handoff", worker_text)
 
@@ -493,7 +520,9 @@ class AutoGenAdapter:
             note = await injector.precheck("critic", "precheck", real_precheck)
             critic_task = build_reviewer_desc(document, draft, note)
             critic_text, stop_reason = await _run_stage(critic_agent, "critic", critic_task,
-                                                        rec, approve_token="VERDICT: APPROVE")
+                                                        rec, approve_token="VERDICT: APPROVE",
+                                                        record=self._record_agent_msg,
+                                                        model_id=PIPELINE_MODEL)
             last_stop_reason = stop_reason
             verdict = parse_verdict(critic_text)
             if verdict and verdict[0] == "REJECT":
@@ -550,14 +579,15 @@ class AutoGenAdapter:
                                  injected=False)
                     continue
                 if isinstance(event, TextMessage):
-                    rec.agent_msg(event.source, event.content)
+                    served_by = worker_id if event.source == agent_name else PIPELINE_MODEL
+                    self._record_agent_msg(rec, event.source, event.content, served_by)
                     if event.source == agent_name:
                         last_worker_text = event.content
         finally:
             logger.removeHandler(handler)
             logger.setLevel(original_level)
 
-        if stop_reason and _ANOMALY_STOP_RE.search(stop_reason):
+        if stop_reason and self._stop_reason_blocks(stop_reason):
             rec.guardrail("MagenticOneOrchestrator", "block", stop_reason)
 
         draft = injector.handoff(agent_name, "handoff", last_worker_text or "")

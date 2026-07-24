@@ -22,8 +22,11 @@ class TraceRecorder:
         self._trace.add(Event(kind=kind, agent=agent, payload=payload, seq=seq))
         return seq
 
-    def agent_msg(self, agent: str, text: str) -> int:
-        return self._emit("agent-msg", agent, {"text": text})
+    def agent_msg(self, agent: str, text: str, model_id: str | None = None) -> int:
+        payload = {"text": text}
+        if model_id is not None:
+            payload["model_id"] = model_id
+        return self._emit("agent-msg", agent, payload)
 
     def tool_call(self, agent: str, tool: str, payload: dict, injected: bool = False) -> int:
         return self._emit("tool-call", agent, {"tool": tool, "injected": injected, **payload})
