@@ -30,8 +30,8 @@ tasks, operators, and seeds; 825 fault runs plus 150 re-baselined controls — w
 that single change, under adjudication rules, anchors, and five predictions
 pre-registered publicly before any scored run. Hard-tier detection (frozen wave-1
 mapping OR an anchored FLAGS report) rose from 15-21% to 53-56% on every
-standard scoreboard row (strict injection-evidence floor: 47-52%), and from
-approximately zero to 73.6% (strict floor 58.3%) on the Magentic-One
+standard scoreboard row (strict injection-evidence floor: 48-52%), and from
+approximately zero to 73.6% (strict floor 55.6%) on the Magentic-One
 configuration once its reporting requirement was integrated into the task's
 output contract rather than appended as an instruction. The negative results are reported with equal prominence: the
 FLAGS surface carries no signal for silent model downgrades (indistinguishable
@@ -112,12 +112,12 @@ published rows and every aggregate exactly.
 
 | row | wave-1 hard (paired) | wave-2 union | strict floor |
 |---|---|---|---|
-| LangGraph default | 17.4% | 55.1% | 47.1% |
-| LangGraph guardrail | 15.1% | 54.9% | 47.9% |
-| CrewAI default | 18.2% | 53.3% | 50.7% |
-| CrewAI guardrail | 21.4% | 53.6% | 50.0% |
-| AutoGen default | 20.5% | 55.6% | 52.1% |
-| AutoGen Magentic guardrail | 8.3%† | 73.6%‡ | 58.3% |
+| LangGraph default | 17.4% | 55.1% | 47.8% |
+| LangGraph guardrail | 15.1% | 54.9% | 48.6% |
+| CrewAI default | 18.2% | 53.3% | 51.3% |
+| CrewAI guardrail | 21.4% | 53.6% | 52.2% |
+| AutoGen default | 20.5% | 55.6% | 52.8% |
+| AutoGen Magentic guardrail | 8.3%† | 73.6%‡ | 55.6% |
 
 † True wave-1 detection ~0% (wave-1 footnote 5). ‡ The honest reading: flags-only
 union; 84.7% arises only under the permissive pre-registered mapping whose
@@ -261,9 +261,10 @@ number was quoted.
 Wave-1's limitations carry (one pipeline model, five seeds, judged soft tier,
 maintenance-mode AutoGen lineage). Wave-2 adds: anchor adjudication is
 deterministic but permissive at the registered edges — bounded above and below
-by the published/strict pair, with base rates disclosed, though the strict column
-is currently a stated QC-pass result rather than a committed code path, and making
-it independently reproducible is the first v0.2.1 item (QC ledger, finding 5); the T2 guardrail
+by the published/strict pair, with base rates disclosed and the strict floor
+recomputable from committed code (`sabot/strict.py`, which persists the anchor-side
+classification the first published floor had only stated; recomputing corrected those
+floors by +1 to +3 cells on standard rows and -2 on Magentic, and moved no headline); the T2 guardrail
 restructure makes that row's guardrail-surface acts non-comparable across waves
 (reviewer and FLAGS surfaces unaffected); the O4 landing probe can exclude cells
 wave 1 counted, so O4 rows are not strictly paired; the union headline is by
@@ -274,11 +275,12 @@ survived a mid-run tool-boundary breach (section 6).
 
 ## 8. What follows
 
-v0.2.1 (dated, post-publication): a committed strict-evidence scorer with the
-anchor-side classification persisted per cell, so the sensitivity floor becomes
-reproducible from published code rather than stated (section 7); the narrow
-retry-reason adjudication; the O4 flags carve-out; an anchor-collision review
-pass; and the six wording fixes.
+v0.2.1 (dated, post-publication): the strict-evidence scorer shipped first, on
+publication day, because a sensitivity bound readers are asked to quote should not
+rest on an unreproducible analysis (section 7). Still queued: the narrow retry-reason
+adjudication; the O4 flags carve-out; an anchor-collision review pass — the strict
+recompute confirmed three cell classes whose registered anchors cannot separate
+injected from true text, so they score zero at the floor; and the six wording fixes.
 Beyond: multi-model replication, Microsoft agent-framework as the successor
 lineage, and the obvious engineering question this result raises — if one
 prompt-level requirement triples own-check detection, what does a

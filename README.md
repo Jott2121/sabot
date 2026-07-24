@@ -82,23 +82,31 @@ tagged spec before any scored run.
 
 | framework | config | wave-1 hard (paired) | wave-2 union | strict floor‡ |
 |---|---|---|---|---|
-| LangGraph | default | 17.4% | 55.1% | 47.1% |
-| LangGraph | guardrail | 15.1% | 54.9% | 47.9% |
-| CrewAI | default | 18.2% | 53.3% | 50.7% |
-| CrewAI | guardrail | 21.4% | 53.6% | 50.0% |
-| AutoGen | default | 20.5% | 55.6% | 52.1% |
-| AutoGen (Magentic-One) | guardrail | 8.3%† | **73.6%**§ | 58.3% |
+| LangGraph | default | 17.4% | 55.1% | 47.8% |
+| LangGraph | guardrail | 15.1% | 54.9% | 48.6% |
+| CrewAI | default | 18.2% | 53.3% | 51.3% |
+| CrewAI | guardrail | 21.4% | 53.6% | 52.2% |
+| AutoGen | default | 20.5% | 55.6% | 52.8% |
+| AutoGen (Magentic-One) | guardrail | 8.3%† | **73.6%**§ | 55.6% |
 
 ‡ Strict injection-evidence floor: counts only flags quoting injection-only tokens.
 It deliberately under-counts (it discards genuine paraphrase detections); the truth
 lies between the floor and the published number, and **both should be quoted as a
-pair**. The strict column is currently a stated QC-pass result rather than a
-committed code path; making it independently reproducible is the first v0.2.1 item
-([QC ledger finding 5](harness/docs/qc-wave2-2026-07-24.md)). † Same six wave-1
+pair**. The strict column is recomputable from committed code: `python
+scripts/score_strict.py` regenerates
+[STRICT-FLOOR.md](harness/runs/wave2/STRICT-FLOOR.md), which publishes the per-row
+table and the persisted anchor classification with a reason for every anchor it
+drops. Doing that recompute corrected the floors first published here by +1 to +3
+cells on standard rows and -2 on Magentic
+([QC ledger finding 5](harness/docs/qc-wave2-2026-07-24.md)); no headline moved.
+
+† Same six wave-1
 detections as the 4.0% in the wave-1 table above; the rate differs because the
 denominator does — 150 valid wave-1 cells there, versus the 72 that survive wave-2's
 pre-registered Magentic carve-out here. True detection in this row is ~0% either way
-(wave-1 footnote 5). § **73.6% is
+(wave-1 footnote 5).
+
+§ **73.6% is
 the honest number for this row, not the 84.7% in the scoreboard's union column** —
 84.7% arises only under the permissive pre-registered mapping, whose Magentic acts are
 100% stall noise ([footnotes 1–2](harness/runs/wave2/WAVE2-RESULTS.md)).
