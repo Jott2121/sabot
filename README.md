@@ -1,5 +1,7 @@
 # Sabot
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21539796.svg)](https://doi.org/10.5281/zenodo.21539796)
+
 **Crash-test ratings for agent stacks.** Sabot plants controlled faults inside a running
 agent pipeline and scores what fraction of them the pipeline's **own** checks catch.
 
@@ -163,6 +165,10 @@ framework-vs-framework results anyone can reproduce.
   seeds published in this repository. Anything else is "derived from Sabot" — say so.
 - The canonical scoreboard lives in this repository. Maintainer disputes over mappings
   are adjudicated publicly here (SPEC §5).
+- Archived and citable on Zenodo: [10.5281/zenodo.21539796](https://doi.org/10.5281/zenodo.21539796)
+  (concept DOI, always the latest release). The `v0.2.0-wave2` release carrying both
+  preprints and the full trace corpus is
+  [10.5281/zenodo.21539797](https://doi.org/10.5281/zenodo.21539797).
 - Cite via `CITATION.cff` (GitHub's "Cite this repository" button). Spec, docs, and
   results are CC BY 4.0 — attribution is required, not optional. Harness code
   publishes under Apache-2.0 with the results.

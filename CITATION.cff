@@ -6,6 +6,13 @@ authors:
     given-names: Jeff
 repository-code: "https://github.com/Jott2121/sabot"
 url: "https://github.com/Jott2121/sabot"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21539796
+    description: "Concept DOI — always resolves to the latest Sabot release. Cite this unless you need one exact version."
+  - type: doi
+    value: 10.5281/zenodo.21539797
+    description: "Version DOI for v0.2.0-wave2 — the wave-1 + wave-2 release (both preprints, full trace corpus)."
 license: CC-BY-4.0
 version: v0.2.0
 date-released: "2026-07-24"
