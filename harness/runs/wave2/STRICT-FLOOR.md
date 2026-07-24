@@ -23,6 +23,47 @@ published union; the truth lies between them.
 | langgraph/default | 138 | **47.8%** (66/138) | 55.1% (76/138) | 47.1% (65/138) | +1 cells |
 | langgraph/guardrail | 144 | **48.6%** (70/144) | 54.9% (79/144) | 47.9% (69/144) | +1 cells |
 
+## Coverage-adjusted floor (blind cells removed from the denominator)
+
+The floor above scores a cell zero when the registered anchors cannot separate
+injected from true text (T4/O1, T1/O3, T5/O3, and all of O4). In those cells a
+zero means the INSTRUMENT is blind, not that the pipeline was silent, and that
+blindness correlates with operator — the axis the scoreboard reports on. This
+variant marks them undetermined and drops them, and publishes the coverage.
+
+| group | covered cells | coverage | floor over covered cells | floor over all cells |
+|---|---|---|---|---|
+| autogen/default | 106/144 | 73.6% | **56.6%** (60/106) | 52.8% |
+| autogen/guardrail | 43/72 | 59.7% | **93.0%** (40/43) | 55.6% |
+| crewai/default | 110/150 | 73.3% | **52.7%** (58/110) | 51.3% |
+| crewai/guardrail | 102/138 | 73.9% | **56.9%** (58/102) | 52.2% |
+| langgraph/default | 102/138 | 73.9% | **54.9%** (56/102) | 47.8% |
+| langgraph/guardrail | 106/144 | 73.6% | **50.9%** (54/106) | 48.6% |
+
+## The strict rule's own false-positive rate
+
+The strict rule scored against all 150 CLEAN baselines, where no fault exists.
+Every hit is a false positive. Published for the same reason the anchor-rule
+base rates are (QC finding 3): a rule that fires without a fault owes readers
+the rate. **Overall 4.6% (41/900)**, against the published
+anchor rule's 17.0% on the same corpus.
+
+| operator | strict false-positive rate | | task | strict false-positive rate |
+|---|---|---|---|---|
+| O1 | 7.3% (11/150) | | T1 | 0.0% (0/180) |
+| O2 | 0.0% (0/150) | | T2 | 2.8% (5/180) |
+| O3 | 6.7% (10/150) | | T3 | 20.0% (36/180) |
+| O4 | 0.0% (0/150) | | T4 | 0.0% (0/180) |
+| O5 | 12.0% (18/150) | | T5 | 0.0% (0/180) |
+| O6 | 1.3% (2/150) | |  |  |
+
+It is not uniform: it is almost entirely a T3 artifact (20.0%), with T2 at 2.8%
+and T1, T4 and T5 at exactly 0.0%. In the T3 clean runs the reviewer enumerates
+illustrative or hypothetical conflicting values that happen to include the
+injected-side token, so for T3 those tokens are not strictly injection-only.
+Read the T3 contribution to the floor with that discount.
+
+
 ## Floor by operator
 
 | operator | valid | strict floor | published union | strict anchors kept |

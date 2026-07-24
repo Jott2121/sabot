@@ -264,7 +264,15 @@ deterministic but permissive at the registered edges — bounded above and below
 by the published/strict pair, with base rates disclosed and the strict floor
 recomputable from committed code (`sabot/strict.py`, which persists the anchor-side
 classification the first published floor had only stated; recomputing corrected those
-floors by +1 to +3 cells on standard rows and -2 on Magentic, and moved no headline); the T2 guardrail
+floors by +1 to +3 cells on standard rows and -2 on Magentic, and moved no headline).
+The strict floor carries two limitations of its own, both measured and published:
+it is a lower bound on detection *this anchor set can see*, since three cell classes
+have no injection-only anchor at all and score zero there whether or not the pipeline
+spoke — so a coverage-adjusted variant is published alongside (73-74% coverage on
+standard rows, floor 50.9-56.9% over covered cells) — and the strict rule itself fires
+on 4.6% of clean baselines where no fault exists, almost entirely a T3 artifact
+(20.0% on T3 against 0.0% on T1, T4 and T5), against 17.0% for the published anchor
+rule on the same corpus; the T2 guardrail
 restructure makes that row's guardrail-surface acts non-comparable across waves
 (reviewer and FLAGS surfaces unaffected); the O4 landing probe can exclude cells
 wave 1 counted, so O4 rows are not strictly paired; the union headline is by
