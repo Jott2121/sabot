@@ -1,0 +1,75 @@
+{
+ "_comments": {
+  "_": "JSON has no comments, so the worked example lives here. Delete this whole _comments key before you submit -- the validator ignores it either way, but a merged row should not carry instructions in its manifest.",
+  "schema": "Always the literal string 'sabot-submission/1'. Do not change it.",
+  "slug": "Directory name under submissions/. One row = one directory. Convention: <framework>-<config>-<model>, lowercase, hyphens.",
+  "submitted": "ISO date you opened the pull request.",
+  "sabot_commit": "Full 40-character SHA of the sabot commit you ran against. The tasks, operators, anchor table and scorers all come from that commit.",
+  "provenance": "Always the literal string 'third-party'. Submitted rows publish in their own table and are never pooled into the author-run medians or the headline. This field is how that separation is enforced mechanically.",
+  "spec_version": "The tagged SPEC revision you scored against. Must match the SPEC.md in the commit you ran. A row may not cite an untagged revision.",
+  "protocol": "'wave1-mapping' if you scored only the SPEC section 5 mapping surface. 'wave2-union' if you also ran the anomaly-first FLAGS protocol (SPEC section 10) and are claiming the union surface.",
+  "framework": "id is the lowercase slug that appears in every trace's `framework` field. version is an exact pin -- no ranges, no ^ or >=.",
+  "dependency_pins": "Everything else whose version could move a number: the agent SDK, the model client, the orchestration layer. Exact pins only.",
+  "config": "Which of the two rows this is. name is free text ('default', 'guardrail', ...) and must match every trace's `config` field. description says what the review or guardrail machinery actually is, in enough detail that a reader can rebuild it.",
+  "pipeline_model": "The one model serving every agent in the pipeline, uniform across every run (SPEC section 6, fairness by uniformity).",
+  "replicate_labels": "At least five. These are LABELS, not random seeds -- if you did not pass them to an RNG, do not call them seeds. Directory names under traces/<task>/<operator>/ are these labels verbatim.",
+  "spend_usd": "What the row cost you to produce. Published with the row.",
+  "traces": "{\"in_repo\": true} when the corpus ships in this directory. For a large corpus, {\"tarball_url\": \"https://...\", \"sha256\": \"<64 hex>\"} instead -- but CI validates only what is in-repo, so an external corpus is verified by the maintainer locally before the row lands.",
+  "carve_outs": "Structural carve-outs, in the SPEC 10.6 pattern: an operator whose fault cannot land in view of any component of your pipeline. These cells are never run and leave the matrix entirely -- they are not exclusions and not zeros. Each one needs a reason and a spec_ref, and the merged row is published with the carve-out named. Delete the key if you have none.",
+  "exclusions": "Every cell that did not produce a scored result, itemized one by one, never silently dropped. code is one of BASELINE_FAIL, RUN_ERROR, INJECTION_UNVERIFIED (SPEC section 3). A RUN_ERROR or INJECTION_UNVERIFIED exclusion must still ship its runresult.json -- the quarantined trace is what makes the exclusion auditable. Delete the key if you have none.",
+  "claimed": "The row you are claiming. Every counter is {hits, n} and every one is recomputed from your raw traces by this repo's committed scorers; a mismatch of one cell fails validation. clean_baseline_false_anchor is the false-anchor base rate on your clean baselines -- run the validator, read the BASE_RATE line, and publish what it prints."
+ },
+
+ "schema": "sabot-submission/1",
+ "slug": "example-framework-default-gpt-5-6-terra",
+ "submitted": "2026-08-01",
+ "sabot_commit": "0000000000000000000000000000000000000000",
+ "provenance": "third-party",
+ "spec_version": "v0.2.1",
+ "protocol": "wave2-union",
+
+ "framework": {
+  "id": "exampleframework",
+  "name": "ExampleFramework",
+  "version": "3.1.0",
+  "repo": "https://github.com/example/exampleframework"
+ },
+ "dependency_pins": {
+  "exampleframework": "3.1.0",
+  "exampleframework-openai": "0.9.4"
+ },
+
+ "config": {
+  "name": "default",
+  "description": "Hand-rolled multi-agent shape (load -> worker -> review -> revise|emit); review is an LLM reviewer using the verdict-token protocol (SPEC section 5); one revise loop; no deterministic guardrail."
+ },
+ "pipeline_model": {
+  "id": "gpt-5.6-terra",
+  "provider": "openai",
+  "temperature": "model default (no temperature parameter transmitted)"
+ },
+
+ "replicate_labels": ["r1", "r2", "r3", "r4", "r5"],
+ "spend_usd": 0.0,
+ "contact": {
+  "name": "Your Name",
+  "email": "you@example.org",
+  "github": "your-handle"
+ },
+
+ "traces": {"in_repo": true},
+
+ "carve_outs": [],
+ "exclusions": [],
+
+ "claimed": {
+  "valid_cells": 150,
+  "wave1_mapping": {"hits": 0, "n": 150},
+  "flags_anchored": {"hits": 0, "n": 150},
+  "union": {"hits": 0, "n": 150},
+  "reacted": {"hits": 0, "n": 150},
+  "recovered": {"hits": 0, "n": 150},
+  "strict_floor": {"hits": 0, "n": 150},
+  "clean_baseline_false_anchor": {"hits": 0, "n": 150}
+ }
+}
