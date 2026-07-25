@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Python dependencies. The only Python project in this repo is the harness, whose
+  # pyproject.toml lives in /harness (runtime deps are stdlib-only; this tracks the
+  # dev extras -- pytest, mutmut).
+  - package-ecosystem: "pip"
+    directory: "/harness"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      python:
+        patterns: ["*"]
+
+  # GitHub Actions — keeps the SHA-pinned actions current
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ["*"]

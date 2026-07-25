@@ -47,6 +47,26 @@ also_copy = ["sabot", "scripts"]
 # runs normally under a plain `pytest -q` from the repo root.
 pytest_add_cli_args_test_selection = ["--ignore=tests/test_venvs.py"]
 
+[tool.coverage.run]
+source = ["sabot"]
+# The three framework adapter families can only execute inside their pinned framework
+# virtualenvs (.venv-langgraph / .venv-crewai / .venv-autogen, built by
+# scripts/setup_venvs.sh); their test suites pytest.importorskip themselves when the
+# framework is absent. Omitting them keeps the coverage number honest about the
+# stdlib-only core that an offline run actually reaches -- it is not a claim that the
+# adapters are untested. Adapter coverage comes from running the suite inside each
+# framework venv; fault-detection evidence for the core is in MUTATION.md.
+omit = [
+    "sabot/adapters/autogen_adapter.py",
+    "sabot/adapters/crewai_adapter.py",
+    "sabot/adapters/langgraph_adapter.py",
+    "sabot/adapters/probe_autogen.py",
+    "sabot/adapters/probe_crewai.py",
+    "sabot/adapters/wave2_autogen.py",
+    "sabot/adapters/wave2_crewai.py",
+    "sabot/adapters/wave2_langgraph.py",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # crewai 1.15.5 emits its own DeprecationWarnings when real Crew/Agent/Task objects are
