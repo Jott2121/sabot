@@ -1,7 +1,9 @@
 # Wave-2 build notes (2026-07-23) — carry into the wave-2 paper
 
-Independent adversarial review of the v0.2 build (commits 1207640, 66eacd3,
-4850d2d) CLEARED the paid run: no frozen-behavior violation, ANCHORS_V2
+Internally independent adversarial review of the v0.2 build (commits 1207640, 66eacd3,
+4850d2d) — a separate reviewing agent working from the spec, same project and
+authorship, not third-party external review —
+CLEARED the paid run: no frozen-behavior violation, ANCHORS_V2
 character-exact vs SPEC 10.4, money path sound. Three non-blocking items to
 carry forward honestly:
 
