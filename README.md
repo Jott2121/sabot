@@ -63,9 +63,9 @@ git clone --depth 1 https://github.com/Jott2121/sabot && cd sabot/harness
 python3 scripts/score_strict.py --check
 #    -> strict floor stable across 6 rows
 
-# 2. the seed-cluster bootstrap intervals, verified against their frozen baseline
+# 2. the replicate-cluster bootstrap intervals, verified against their frozen baseline
 python3 scripts/score_uncertainty.py --check
-#    -> uncertainty stable across 22 pinned intervals; UNCERTAINTY.md byte-identical
+#    -> uncertainty stable across 24 pinned intervals; UNCERTAINTY.md byte-identical
 
 # 3. rebuild the ENTIRE wave-2 scoreboard from the raw traces
 python3 scripts/score_wave2.py --seeds-file ../seeds/wave2.json
