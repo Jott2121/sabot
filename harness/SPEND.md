@@ -244,6 +244,8 @@ model default, uniformly. Kept for honesty rather than rewritten.
   dashboard reconcile against Jeff's OpenAI usage page is **still owed**; until it
   lands, treat $33.47 as the meter reading and not as the amount billed. Any paper
   or scoreboard sentence quoting $33.47 must carry that caveat.
+  *(Reconciled 2026-07-25 — see the reconcile entry below. The $38-40 expectation
+  was wrong: wave-2 real came in ~1.7x margined, ~$58.)*
 - Judge: **$0** — the cross-lineage judge runs on the Claude Max subscription, not
   on a metered API key (verified no `ANTHROPIC_API_KEY` in the driver environment
   that could reroute billing).
@@ -257,4 +259,35 @@ model default, uniformly. Kept for honesty rather than rewritten.
   (`runs/wave2-quarantine-judge/`) and the full judged set re-ran under the
   hardened two-arm gate. See `docs/qc-wave2-2026-07-24.md` addendum.
 - Budget position: wave-1 + probe + wave-2 margined = $84.72 against the $500 hard
-  cap; ~$100 real once the ~15% under-read is applied.
+  cap; ~$100 real once the ~15% under-read is applied. *(Superseded 2026-07-25:
+  dashboard-verified real is $118 — see the reconcile entry below.)*
+
+## 2026-07-25 — DASHBOARD RECONCILE #2 (Jeff, OpenAI usage dashboard)
+
+- Dashboard-verified REAL spend, whole build lifetime (2026-07-22..24, same
+  dashboard view as the 2026-07-23 reconcile): **~$118 total** (Jeff's read,
+  rounded; treat as accurate to a couple of dollars).
+- Wave-2 slice, by subtraction from the prior reconcile: ~$118 − ~$60 = **~$58
+  real** against the wave-2 margined ledger of $33.47 — **real ≈ 1.73x margined**.
+  The wave-1 calibration (real ≈ 1.17x margined) did NOT carry to wave 2; the
+  $38-40 expectation recorded above was wrong by ~1.5x.
+- **This resolves the mid-run quota puzzle.** The 429 outage hit when the margined
+  meter read $29.16 against a $47 wallet, which looked like a funding shortfall.
+  At 1.73x, real spend at that moment was ≈ $50 — the wallet genuinely was dry.
+  The answer to "funding shortfall or magentic bills hotter than calibration" is:
+  bills hotter, wave-wide.
+- Attribution assumption, stated plainly: this key's dashboard total is treated as
+  all-Sabot, the same method as the 2026-07-23 reconcile. No other project ran on
+  the key in the window as far as the ledgers show; if that assumption breaks, the
+  wave-2 slice shrinks accordingly.
+- Why the multiplier likely grew: the wave-2 mix is heavier on magentic-profile
+  runs (119 of 958 ledgered, priced $0.105 margined vs $0.025 standard) and the
+  contract-integrated FLAGS protocol lengthens outputs; the per-run constants were
+  carried unchanged from wave 1 rather than re-derived. No attempt is made here to
+  decompose the 1.73x further — the ledgers record runs, not tokens billed.
+- **STANDING PLANNING RULE (supersedes the 2026-07-23 rule):** plan future waves
+  at **2x the margined circuit-breaker figure** (1.73x observed + headroom), and
+  size wallets to the 2x number before starting a matrix. The margined figure
+  remains the meter; it is not, and has never been, the bill.
+- Budget position: **$118 real vs the $500 hard cap — 23.6% consumed** for the
+  entire two-wave build, probe, and all re-runs.
