@@ -63,7 +63,11 @@ git clone --depth 1 https://github.com/Jott2121/sabot && cd sabot/harness
 python3 scripts/score_strict.py --check
 #    -> strict floor stable across 6 rows
 
-# 2. rebuild the ENTIRE wave-2 scoreboard from the raw traces
+# 2. the seed-cluster bootstrap intervals, verified against their frozen baseline
+python3 scripts/score_uncertainty.py --check
+#    -> uncertainty stable across 22 pinned intervals; UNCERTAINTY.md byte-identical
+
+# 3. rebuild the ENTIRE wave-2 scoreboard from the raw traces
 python3 scripts/score_wave2.py --seeds-file ../seeds/wave2.json
 git diff --stat runs/wave2/WAVE2-RESULTS.md
 #    -> all 189 scored rows come back byte-identical. The only diff is the
@@ -208,6 +212,25 @@ publish-regardless commitment):
 
 Soft tier: judge kappa 0.767 over 68 double-judged pairs, zero exclusions; total
 notice rate 65.5%, an 8.3-point override gap over the hard union.
+
+### Uncertainty: what five seeds can and cannot support
+
+Every number above is a point estimate over five pre-registered seeds, and cells
+within a seed are correlated.
+[UNCERTAINTY.md](harness/runs/wave2/UNCERTAINTY.md) puts intervals on all of them
+with a seed-cluster bootstrap — resampling *seeds*, not cells, because the seed is
+the unit this design actually replicates, and enumerating all 126 distinct resamples
+exactly rather than simulating them. The headline holds: median hard-tier detection
+**16.7% [15.6, 17.8] → 55.0% [52.3, 58.0]**, a seed-paired lift of **+38.3 pp
+[+36.4, +40.6]**; on the 726-cell same-cell paired grid the effect is **+39.4 pp
+[+37.0, +41.4]**, positive on 5/5 seeds in every framework row. Two things that file
+states plainly and the tables above cannot: the five standard rows (53.3–55.6%
+published, 47.8–52.8% strict floor) are **statistically indistinguishable from each
+other** — every pairwise CI contains zero, so this scoreboard is not yet a ranking —
+and a sign test on five seeds can never reach p < 0.05 (exact minimum 0.0625). Its
+limitations section is the point, not an appendix: seed resampling cannot cover
+model-version drift or task-suite selection. Recompute with
+`python scripts/score_uncertainty.py --check`.
 
 Full scoreboard, exclusion appendix, and all 9 QC footnotes:
 [harness/runs/wave2/WAVE2-RESULTS.md](harness/runs/wave2/WAVE2-RESULTS.md).
