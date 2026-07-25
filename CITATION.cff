@@ -13,6 +13,9 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.21539797
     description: "Version DOI for v0.2.0-wave2 — the wave-1 + wave-2 release (both preprints, full trace corpus)."
+  - type: doi
+    value: 10.5281/zenodo.21571007
+    description: "Version DOI for v0.2.1 — uncertainty supplement, strict floor as code, prospective rule adoptions, T3 disclosure, submission route."
 license: CC-BY-4.0
 version: v0.2.1
 date-released: "2026-07-25"
