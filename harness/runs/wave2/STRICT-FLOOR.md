@@ -58,10 +58,16 @@ anchor rule's 17.0% on the same corpus.
 | O6 | 1.3% (2/150) | |  |  |
 
 It is not uniform: it is almost entirely a T3 artifact (20.0%), with T2 at 2.8%
-and T1, T4 and T5 at exactly 0.0%. In the T3 clean runs the reviewer enumerates
-illustrative or hypothetical conflicting values that happen to include the
-injected-side token, so for T3 those tokens are not strictly injection-only.
-Read the T3 contribution to the floor with that discount.
+and T1, T4 and T5 at exactly 0.0%. Root cause (corrected 2026-07-25 by the
+anchor-collision review; the earlier reading called these values "illustrative
+or hypothetical"): the T3 adapters serve the COMPLETE task file to the coder
+and reviewer, including its `## Ground truth per operator` section, so the
+clean-run reviewer is quoting the fault catalog it was handed, and for T3 the
+injected-side tokens are not strictly injection-only. This is an instrument
+defect (both waves, all frameworks), disclosed in
+docs/anchor-collision-review-2026-07-25.md and the QC ledger addendum; a
+headline sensitivity excluding all T3 rows is published there (median 55.0% ->
+53.6%). Read the T3 contribution to the floor with that discount.
 
 
 ## Floor by operator
