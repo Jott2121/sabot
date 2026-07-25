@@ -47,7 +47,14 @@ bands: [SPEC.md](SPEC.md).
 
 No API key, no model calls, no virtualenv — the hard tier is deterministic by design, and
 the raw traces for all 2,025 runs ship in this repo. That is what publishing traces is
-*for*. Python 3.9+, stdlib only:
+*for*.
+
+**Two version floors, and they are not in conflict.** The offline recompute and scoring
+scripts under `harness/scripts/` are **Python 3.9+, standard library only** — no install
+step, no third-party dependency, nothing to build. Running the *harness itself* — planting
+faults in live agent pipelines — requires **Python 3.11+** plus the pinned framework
+virtualenvs (`harness/pyproject.toml`, `harness/scripts/setup_venvs.sh`). Everything in
+this section is the first kind:
 
 ```bash
 git clone --depth 1 https://github.com/Jott2121/sabot && cd sabot/harness
@@ -204,8 +211,10 @@ notice rate 65.5%, an 8.3-point override gap over the hard union.
 
 Full scoreboard, exclusion appendix, and all 9 QC footnotes:
 [harness/runs/wave2/WAVE2-RESULTS.md](harness/runs/wave2/WAVE2-RESULTS.md).
-Adversarial QC ledger — an independent 189/189 recompute, the attack on the biggest
-lift claim, and the judge-sandbox incident:
+Adversarial QC ledger — an internally independent 189/189 recompute (fresh code written
+against the spec by a separate agent, same project and authorship — not third-party
+external replication), the attack on the biggest lift claim, and the judge-sandbox
+incident:
 [harness/docs/qc-wave2-2026-07-24.md](harness/docs/qc-wave2-2026-07-24.md). Raw
 traces for all 975 wave-2 runs and both quarantine directories are under
 [harness/runs/](harness/runs/). Mutation-testing receipts:
