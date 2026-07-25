@@ -36,7 +36,7 @@ jobs:
         #     framework install is needed.
         #   * The two judge_live tests are deselected by the `addopts` in
         #     harness/pyproject.toml -- they shell out to the real `claude` CLI.
-        # Expected: 323 passed, 15 skipped, 2 deselected.
+        # Expected: 370 passed, 15 skipped, 2 deselected.
         run: python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 
   scorer:
@@ -57,3 +57,9 @@ jobs:
         # No pip install: the scorer path must stay importable with the standard
         # library alone, on a bare checkout, with no API key.
         run: python scripts/score_strict.py --check
+      - name: Statistical uncertainty, verified against its frozen baseline
+        # Same contract: the seed-cluster bootstrap is exhaustive (126 resamples), so
+        # every published interval is reproducible to the digit on every version here.
+        # It also proves the Monte-Carlo cross-check's stream is stable across 3.9-3.13,
+        # since the rendered markdown quotes it and is compared byte-for-byte.
+        run: python scripts/score_uncertainty.py --check

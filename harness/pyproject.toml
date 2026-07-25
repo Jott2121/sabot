@@ -23,7 +23,7 @@ source_paths = [
     "sabot/checks.py", "sabot/serde.py", "sabot/adapters/recorder.py",
     "sabot/adapters/verdict.py", "sabot/judge/rubric.py",
     "sabot/matrix.py", "sabot/judge/notes.py", "sabot/scoreboard.py",
-    "sabot/probe.py", "sabot/wave2.py", "sabot/strict.py",
+    "sabot/probe.py", "sabot/wave2.py", "sabot/strict.py", "sabot/uncertainty.py",
 ]
 # sabot/probe.py (wave-2 anomaly-first probe, pure logic) gated pre-spend on this
 # branch: 91/91 mutants killed, 0 survivors, 0 equivalents (2026-07-23).
