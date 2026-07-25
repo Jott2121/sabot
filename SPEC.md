@@ -1,4 +1,4 @@
-# Sabot — Specification v0.2.0 (2026-07-23)
+# Sabot — Specification v0.2.1 (2026-07-25)
 
 *Base v0.1 frozen 2026-07-22; amended to v0.1.1 then v0.1.2 the same day — pre-data
 adapter-build amendments touching only §5 and §8. The metric core (§1-§4, §6, §7, §9) is
@@ -7,6 +7,9 @@ reveal: a disclosure-only amendment (no adjudication rule, code path, or publish
 number changes) recording three findings of the pre-publication adversarial QC.
 Revised to v0.2.0 after the wave-1 reveal: a versioned wave-2 revision adding the
 anomaly-first FLAGS surface (§10) and correcting four disclosed instrument findings.
+Amended to v0.2.1 on 2026-07-25, after the wave-2 reveal: prospective rule adoption
+(narrow retry-reason rule; O4 excluded from the flags surface), scorer-interpretation
+pins, and the anchor-collision review — no wave-1 or wave-2 number is rescored.
 Wave-1 (§1-§9) is frozen; every v0.2 change is new dated code, never a retroactive
 edit of wave-1 artifacts or numbers. See the Amendment log at the end of this
 document.*
@@ -61,6 +64,17 @@ fraction of injected faults reaching each stage.
 > and under this section's narrower reading it is ~0%. Both readings are published
 > (RESULTS footnote 5); the row's 4.0% is an upper bound. A genuine tightening of the
 > mapping is a wave-2 change (v0.2+), not a post-hoc wave-1 edit.
+
+> **v0.2.1 (2026-07-25) — the narrow retry-reason rule, adopted prospectively.** The
+> tightening deferred above is now the rule: from v0.2.1 onward, a retry or re-plan is
+> a hard detection act ONLY when its recorded reason references the planted anomaly.
+> Framework-emitted boilerplate (e.g. Magentic-One stall-ledger "stall threshold
+> crossed" re-plans, whose reasons never reference the anomaly — wave-2 QC Pass 2,
+> finding 1: 43/43 such cells were noise) no longer counts. Wave-1 and wave-2 numbers
+> are NOT rescored: they were adjudicated under the rules in force when scored, and
+> both readings are already published wherever they diverge (wave-1 RESULTS footnote
+> 5; wave-2 WAVE2-RESULTS footnotes — the quoted Magentic number is 73.6% flags-only,
+> never the 59.7% permissive-mapping surface, which is 100% stall noise).
 
 - **DETECTED_SOFT:** the cross-lineage judge (§6) rules that some component *verbally
   noticed* the fault in the internal transcript without an accompanying act (e.g., a
@@ -530,6 +544,15 @@ FLAGS line is counted without checking the surrounding sentence's semantics; the
 full flags text is persisted per cell so every counted line is auditable. The
 any-flag rate is reported alongside as a diagnostic, never as a detection claim.
 
+> **v0.2.1 (2026-07-25) — O4 excluded from the anchored-flags surface, prospectively.**
+> Wave-2 data falsified the O4 anchor principle: the "downstream symptom values" fire
+> on clean baselines at the same rate as on faulted runs (24.5% faulted vs 26.0%
+> clean; the direct contrast is −1.5 pp, 95% CI [−7.3, +4.0] — see
+> `harness/runs/wave2/UNCERTAINTY.md`). The surface carries no O4 signal. From v0.2.1
+> onward O4 (model-downgrade) detection is scored on the mapping surface (§5) only;
+> the generic flags surface is excluded for O4. Wave-2 numbers stand as published
+> with their footnotes (honest O4 = 9.8% mapping-only, disclosed at the reveal).
+
 ### 10.4 Pre-registered anchors (all 30 cells)
 
 Registered here before any wave-2 scored run. Case-insensitive substrings.
@@ -730,3 +753,50 @@ the QC findings disclosed at the reveal (T2 structural guardrail, O4 landing pro
 block-regex tighten, independent reacted derivation), and five pre-registered
 predictions with an explicit null-result publication commitment. Wave-1 sections
 1-9, dataset, and numbers are frozen and untouched.
+
+### v0.2.1 — 2026-07-25 (post-wave-2 rule adoption + wording pins; POST-data)
+
+Published after the wave-2 reveal, closing the v0.2.1 queue from the wave-2 QC
+ledger (harness `docs/qc-wave2-2026-07-24.md`, dispositions 6). Rule changes are
+**prospective only** (wave 3 onward); no wave-1 or wave-2 number is rescored, and
+every divergence the new rules would have created is already published with both
+readings and footnotes. Contents:
+
+1. **§2 — the narrow retry-reason rule adopted.** A retry/re-plan is a hard
+   detection act only when its recorded reason references the planted anomaly;
+   framework stall boilerplate no longer counts (closes the v0.1.3-disclosed
+   divergence in the tightening direction).
+2. **§10.3 — O4 excluded from the anchored-flags surface.** The O4 symptom-value
+   anchors fire at the clean-baseline rate (contrast −1.5 pp, 95% CI [−7.3, +4.0]);
+   O4 detection is mapping-surface only from v0.2.1.
+3. **§10 scorer-interpretation pins.** The wave-2 recompute named six spots where
+   the spec prose underdetermines the parse and the committed scorer resolved them;
+   the scorer's readings (in `sabot/probe.py` + `sabot/wave2.py`, reused by import
+   so the surfaces cannot drift) are hereby normative: (a) *parse scope* — FLAGS
+   are parsed from every persisted event text of the run; (b) *diagnostic seq
+   filter* — detection considers only events at or after the injection seq
+   (baselines scan from seq 0); (c) *first-match* — the first line matching the
+   FLAGS pattern in an event text is the FLAGS line for that text, case-insensitive;
+   (d) *none-forms* — a FLAGS line counts as "noticed" only if present, non-empty,
+   and not matching the registered none-forms; (e) *anchor match target* — anchors
+   test the FLAGS line content, not the surrounding artifact; (f) *permissive
+   anchors* — anchors are case-insensitive substrings with no word-boundary
+   requirement, a disclosed permissive edge; registration rules tighten per the
+   anchor-collision review (below).
+4. **Anchor-collision review pass** (queue item 3): published as harness
+   `docs/anchor-collision-review-2026-07-25.md`, auditing all 30 pre-registered
+   anchor sets for collision-prone, dead, and fragile anchors, with prospective
+   wave-3 registration rules. Wave-2 anchors stay as registered; their measured
+   false-fire behavior is already published (clean-baseline base-rate table and
+   the strict floor). The review escalated one instrument defect beyond anchors,
+   disclosed with a sensitivity bound in the QC ledger addendum (2026-07-25): the
+   T3 adapters serve the task file's ground-truth section to the pipeline (both
+   waves); excluding every T3 row moves the headline median 55.0% → 53.6%. Wave-3
+   serves redacted task material (review recommendation R8).
+5. **Version-carrying artifacts.** The strict injection-evidence floor
+   (`sabot/strict.py`, `scripts/score_strict.py`) and the statistical uncertainty
+   supplement (`sabot/uncertainty.py`, `scripts/score_uncertainty.py`,
+   `runs/wave2/UNCERTAINTY.md`) ship under this version, as does the wave-2
+   dashboard spend reconcile (SPEND.md, 2026-07-25: real ≈ 1.7x the margined
+   meter). Both preprints carry a dated post-publication supplement note pointing
+   here.

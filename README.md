@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21539796.svg)](https://doi.org/10.5281/zenodo.21539796)
 [![License: CC BY 4.0](https://img.shields.io/badge/spec%20%26%20results-CC%20BY%204.0-blue.svg)](LICENSE)
 [![Harness: Apache 2.0](https://img.shields.io/badge/harness-Apache%202.0-blue.svg)](LICENSE-CODE)
-[![SPEC](https://img.shields.io/badge/SPEC-v0.2.0-informational.svg)](SPEC.md)
+[![SPEC](https://img.shields.io/badge/SPEC-v0.2.1-informational.svg)](SPEC.md)
 
 **Crash-test ratings for agent stacks.** Sabot plants controlled faults inside a running
 agent pipeline and scores what fraction of them the pipeline's **own** checks catch.
@@ -23,7 +23,7 @@ agent pipeline and scores what fraction of them the pipeline's **own** checks ca
 > [Wave-2 results](#wave-2-results-2026-07-24-the-fix-measured) · [Papers](papers/) ·
 > [Limitations](#wave-2-results-2026-07-24-the-fix-measured)
 
-One pipeline model, five seeds per cell, pinned framework versions — these are results
+One pipeline model, five replicate runs per cell, pinned framework versions — these are results
 about these frameworks with this model at these versions, not laws of nature.
 
 Every serious agent framework ships self-verification: reviewer agents, critic stages,

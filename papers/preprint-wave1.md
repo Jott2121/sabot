@@ -9,6 +9,22 @@ Jeff Otterson
 (v0.1.3, tagged), pre-registered seeds, harness, raw traces, and the
 pre-publication QC ledger — is public at `github.com/Jott2121/sabot`.*
 
+> **Post-publication statistical supplement (dated note, 2026-07-25).** A
+> statistical supplement published after this paper's release
+> (`harness/runs/wave2/UNCERTAINTY.md`) adds exact replicate-cluster bootstrap
+> intervals to this paper's point estimates: the 16.7% median hard-tier
+> detection carries a 95% CI of [15.6, 17.8]. Two clarifications from that work
+> apply here: (1) the "seeds" (11-15) were never passed to the model or any RNG
+> — they are replicate labels on five stochastic repetitions; (2) framework
+> rows whose intervals overlap are not ranked by this data. The supplement and
+> the prospective rule adoptions from wave-2 QC ship as SPEC v0.2.1 (see the
+> SPEC Amendment log); this paper's text and numbers are unchanged. One
+> instrument defect disclosed 2026-07-25 also touches this paper: the T3
+> adapters serve the task file's ground-truth section to the pipeline, so
+> T3's reviewer had the fault catalog in view — and still detected almost
+> nothing on this paper's surfaces, which restates rather than weakens the
+> finding. Details and a sensitivity bound: the QC ledger addendum.
+
 ---
 
 ## Abstract

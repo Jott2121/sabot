@@ -14,6 +14,27 @@ quarantine directories, and the QC ledger — is public at
 `github.com/Jott2121/sabot`, together with the wave-1 preprint this paper
 extends.*
 
+> **Post-publication statistical supplement (dated note, 2026-07-25).** Every
+> number in this paper is a point estimate; a statistical supplement published
+> after this paper's release (`harness/runs/wave2/UNCERTAINTY.md`, regenerable
+> offline via `scripts/score_uncertainty.py --check`) adds exact
+> replicate-cluster bootstrap intervals for every headline figure — e.g. the
+> 55.0% median carries a 95% CI of [52.3, 58.0] against wave-1's 16.7% [15.6,
+> 17.8], and the per-cell paired effect is +39.4 pp [+37.0, +41.4]. Two of its
+> findings qualify this paper's framing: (1) the five standard framework rows
+> are NOT a ranking — all ten pairwise interval contrasts contain zero; (2) the
+> replicate labels this paper calls "seeds" (11-15) were never passed to the
+> model or any RNG — they are labels on five stochastic repetitions, and the
+> supplement restates the analysis accordingly. The supplement, the strict
+> injection-evidence floor as committed code, and the prospective rule
+> adoptions from these findings ship as SPEC v0.2.1 (see the SPEC Amendment
+> log); this paper's text and numbers are unchanged. One instrument defect
+> found by the v0.2.1 anchor-collision review is disclosed with a sensitivity
+> bound: the T3 adapters serve the task file's ground-truth section to the
+> pipeline (both waves), so T3's reviewer had the fault catalog in view;
+> excluding every T3 row moves the headline median only from 55.0% to 53.6%
+> (QC ledger addendum, 2026-07-25).
+
 ---
 
 ## Abstract
