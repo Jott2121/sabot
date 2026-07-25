@@ -75,6 +75,10 @@ EXPECTED = {
     "o4_honest_mapping_only": (9.7902, 4.2857, 13.986),
     "o4_fault_anchored": (24.4755, 20.2797, 28.6713),
     "o4_clean_base": (26.0, 23.3333, 28.6667),
+    # The O4 null as a CONTRAST rather than two overlapping intervals. Both straddle
+    # zero, and the sign flips between them — see the section-4 disclosure.
+    "o4_contrast": (-1.5245, -7.3333, 4.0047),
+    "o4_matched_contrast": (1.3986, -4.0816, 6.2937),
     "rwd_union": (26.0814, 24.8462, 27.8215),
     "rwd_frozen": (50.0, 49.0775, 51.0582),
 }
@@ -113,7 +117,12 @@ def load_wave1_matrix():
 
 
 def load_clean_baselines():
-    """One row per (clean baseline run x operator): the anchor rule with no fault present."""
+    """One row per (clean baseline run x operator): the anchor rule with no fault present.
+
+    There are 150 baseline runs, one per (framework, config, task, replicate) group, and
+    the matrix driver reuses each across all of that group's operator cells — the shared
+    structure that justifies clustering on the replicate at all.
+    """
     rows = []
     for path in sorted(glob.glob(str(ROWS.parent / "**/baseline-runresult.json"),
                                  recursive=True)):
@@ -127,6 +136,11 @@ def load_clean_baselines():
                          "anchored": scan_trace_flags_v2(trace, task, operator,
                                                          0)["anchored"]})
     return rows
+
+
+def group_key(row):
+    """The (framework, config, task, replicate) group that shares one cached baseline."""
+    return (row["framework"], row["config"], row["task"], row["seed"])
 
 
 # --- small rendering helpers -----------------------------------------------------------
@@ -193,8 +207,9 @@ def render():
     clusters = cluster_ids(w2)
     k = len(clusters)
     if cluster_ids(w1) != clusters or cluster_ids(base) != clusters:
-        raise SystemExit("wave-1 and wave-2 seed sets differ; the contrast is not "
-                         "seed-paired and this report's method does not apply")
+        raise SystemExit("wave-1 and wave-2 replicate label sets differ; the contrast "
+                         "is not replicate-matched and this report's method does "
+                         "not apply")
 
     def row_of(r):
         return "{}/{}".format(r["framework"], r["config"])
@@ -221,6 +236,18 @@ def render():
     }, clusters)
     tb = tabulate(base, lambda r: r["operator"],
                   {"anchored": lambda r: int(r["anchored"])}, clusters)
+    # Matched O4 arms: every group has exactly one O4 cell and exactly one cached
+    # baseline run, so each surviving O4 fault cell pairs 1:1 with its OWN baseline.
+    o4_baseline = {group_key(r): int(r["anchored"]) for r in base
+                   if r["operator"] == "O4"}
+    o4_rows = [r for r in w2 if r["operator"] == "O4"]
+    if len(o4_baseline) != len(base) // len(OPERATORS):
+        raise SystemExit("clean baselines are not one per group; the matched O4 "
+                         "contrast's 1:1 pairing does not hold")
+    tm = tabulate([{"seed": r["seed"], "fault": int(r["flags_anchored"]),
+                    "base": o4_baseline[group_key(r)]} for r in o4_rows],
+                  lambda r: "O4",
+                  {"fault": lambda r: r["fault"], "base": lambda r: r["base"]}, clusters)
 
     n2, n1, npair = (total_n(t2, ROW_KEYS, clusters), total_n(t1, ROW_KEYS, clusters),
                      total_n(tp, ROW_KEYS, clusters))
@@ -245,33 +272,59 @@ def render():
            "recomputed from the raw data and reproduces what is already published; the "
            "new material is the interval columns. This file closes the one substantive "
            "gap an external reviewer named in the wave-2 package: every published "
-           "figure was a point estimate over 5 seeds with correlated cells, carrying "
+           "figure was a point estimate over 5 replicates with correlated cells, carrying "
            "no confidence intervals and no paired effect estimates.")
 
     # --- method -------------------------------------------------------------------
     R.line("## Method")
     R.line()
-    R.para("**Unit of observation vs unit of resampling.** The scoreboard's unit is a "
-           "CELL (framework x config x task x operator x seed). Cells are not "
-           "independent: the five repetitions of a cell share a task, a fault payload "
-           "and a pipeline model, and an entire SEED shares one draw of run-to-run "
-           "sampling noise across every cell it contributes. A binomial interval over "
-           "the {n} valid wave-2 cells would treat {n} correlated observations as {n} "
-           "independent ones, and would be far too narrow.".format(n=n2))
-    R.para("**So the bootstrap resamples SEEDS, not cells** — a cluster bootstrap on "
-           "the one axis this design actually replicates. Each resample draws {k} "
-           "seeds with replacement and recomputes every rate from the cells those "
-           "seeds contributed. Wave 1 and wave 2 reuse the same registered seeds "
-           "verbatim ({s}; seeds/wave2.json), so one drawn seed multiset evaluates "
-           "both waves and the headline contrast stays seed-paired."
+    R.para("**The field named `seed` is a replicate label, not a random seed.** This has "
+           "to come first, because the word invites a claim this design cannot make. "
+           "The values {s} were never passed to the pipeline model and never passed to "
+           "any RNG. All three adapters construct their client from a model id alone — "
+           "`ChatOpenAI(model=model_id)`, `LLM(model=f\"openai/{{model_id}}\")`, "
+           "`OpenAIChatCompletionClient(model=model_id)` — with no `seed` and no "
+           "`temperature` kwarg, and `Cell.seed` reaches only run-id strings, recorder "
+           "metadata and output paths. The pre-registered seeds file already says so in "
+           "its own rule text: \"Seeds are repetition identifiers recorded per run.\" "
+           "That is all they are: **{k} stochastic repetitions of the whole matrix, "
+           "carrying labels**. Everything below is therefore a "
+           "{k}-replicate design — a {k}-matrix sensitivity analysis — and this file "
+           "says replicate, replicate-cluster bootstrap, replicate-jackknife throughout."
            .format(k=k, s=", ".join(str(c) for c in clusters)))
+    R.para("**Unit of observation vs unit of resampling.** The scoreboard's unit is a "
+           "CELL (framework x config x task x operator x replicate). Cells are not "
+           "independent, so a binomial interval over the {n} valid wave-2 cells would "
+           "treat {n} correlated observations as {n} independent ones and would be far "
+           "too narrow.".format(n=n2))
+    R.para("**So the bootstrap resamples REPLICATES, not cells — and the reason is "
+           "structural, not stochastic.** `scripts/run_matrix.py` caches ONE no-fault "
+           "baseline run per (framework, config, task, replicate) group and reuses it "
+           "for every operator cell in that group. The exclusion decision, the "
+           "`recovered` comparison and the clean-run comparator of up to six cells all "
+           "descend from that single shared run. That is a real dependence structure "
+           "the design induces, it lines up exactly with the replicate label, and "
+           "resampling whole replicates preserves it. The clustering is earned by the "
+           "shared baseline — not by model-level randomness, of which there is none to "
+           "point at. Each resample draws {k} replicates with replacement and recomputes "
+           "every rate from the cells those replicates contributed.".format(k=k))
+    R.para("**On pairing wave 1 to wave 2.** Wave 2 reuses wave 1's registered labels "
+           "verbatim (seeds/wave2.json), and this file matches repetition 13 to "
+           "repetition 13. That match is **arbitrary but unbiased**: repetition 13 of a "
+           "cell in wave 1 has no special affinity with repetition 13 of the same cell "
+           "in wave 2, because the labels drove nothing. What carries the paired "
+           "estimate is matching by CELL — same framework, config, task and operator, "
+           "wave-1 rules against wave-2 rules. The label match only fixes which of the "
+           "{k} repetitions pairs with which, and any other 1:1 assignment would be "
+           "equally valid in expectation.".format(k=k))
     mc = estimate(w2_median, k, resamples=monte_carlo_resamples(k))
     R.para("**The intervals are exact, not simulated.** A size-{k} resample with "
            "replacement of {k} clusters has only C({a}, {b}) = 126 distinct multisets "
            "({k}**{k} = {t} ordered draws). This script enumerates all 126 with their "
            "exact multinomial weights, so the percentile CIs below carry **zero "
            "Monte-Carlo error**. Cross-check: an ordinary Monte-Carlo cluster "
-           "bootstrap (20,000 draws, fixed documented seed) puts the headline median "
+           "bootstrap (20,000 draws, fixed documented RNG seed — the analysis's own, "
+           "not the data's) puts the headline median "
            "CI at [{lo:.1f}, {hi:.1f}] against the exact [{elo:.1f}, {ehi:.1f}]."
            .format(k=k, a=2 * k - 1, b=k - 1, t=k ** k, lo=mc.lo, hi=mc.hi,
                    elo=estimate(w2_median, k).lo, ehi=estimate(w2_median, k).hi))
@@ -284,25 +337,26 @@ def render():
            "many DISTINCT values each statistic's bootstrap distribution has, so a "
            "reader can see exactly how coarse each interval is. Two companions travel "
            "with the CI for the same reason:")
-    R.item("**Seed-jackknife range** — the exact min and max over the {} "
-           "leave-one-seed-out datasets. Not a rival interval: it answers \"how far "
-           "does dropping any one seed move this number?\", which a percentile "
-           "cannot.".format(k))
+    R.item("**Replicate-jackknife range** — the exact min and max over the {} "
+           "leave-one-replicate-out datasets. Not a rival interval: it answers \"how "
+           "far does dropping any one repetition move this number?\", which a "
+           "percentile cannot.".format(k))
     R.item("**Bootstrap range** — the min and max attainable over all 126 resamples, "
            "i.e. what the number becomes in the degenerate case where all {} draws "
-           "land on a single seed.".format(k))
+           "land on a single replicate.".format(k))
     R.line()
-    R.para("**A sign test on {k} seeds cannot reach p < 0.05.** The most extreme "
-           "possible outcome ({k}/{k} seeds agreeing) has a two-sided exact p of "
-           "2/2**{k} = {p:.4f}. The per-seed columns below are therefore "
+    R.para("**A sign test on {k} replicates cannot reach p < 0.05.** The most extreme "
+           "possible outcome ({k}/{k} replicates agreeing) has a two-sided exact p of "
+           "2/2**{k} = {p:.4f}. The per-replicate columns below are therefore "
            "**descriptions of direction, never significance claims**, and this file "
            "states that arithmetic rather than letting a reader assume otherwise."
            .format(k=k, p=sign_test_p(k, k)))
-    R.para("**What seed resampling cannot capture.** It captures seed-to-seed sampling "
+    R.para("**What replicate resampling cannot capture.** It captures "
+           "repetition-to-repetition sampling "
            "variation at fixed everything-else. It does **not** capture pipeline-model "
            "version drift, framework version drift, task-suite selection (5 tasks), or "
            "operator-suite selection (6 operators). Those are fixed constants of this "
-           "design, not sampled populations, and no resampling of {} seeds can put an "
+           "design, not sampled populations, and no resampling of {} replicates can put an "
            "interval on them. The README's standing caveat still governs: these are "
            "results about these frameworks with this model at these versions, not laws "
            "of nature.".format(k))
@@ -312,7 +366,7 @@ def render():
     R.line()
     R.para("Both medians are the pre-registered aggregator (SPEC section 7): the median "
            "across the three FRAMEWORKS with configs pooled.")
-    R.line("| quantity | point | 95% cluster-bootstrap CI | seed-jackknife range "
+    R.line("| quantity | point | 95% cluster-bootstrap CI | replicate-jackknife range "
            "| bootstrap range | support |")
     R.line("|---|---|---|---|---|---|")
     key["wave1_median"] = R.track(
@@ -320,7 +374,7 @@ def render():
     key["wave2_median"] = R.track(
         "wave-2 median union (the headline)", estimate(w2_median, k))
     key["median_contrast"] = R.track(
-        "seed-paired difference of medians",
+        "replicate-matched difference of medians",
         estimate(contrast_stat(w2_median, w1_median), k), sign=True)
     key["paired_pooled_effect"] = R.track(
         "pooled per-cell paired effect",
@@ -330,7 +384,7 @@ def render():
          key["wave1_median"], False),
         ("wave-2 median union (published headline, {} valid cells)".format(n2),
          key["wave2_median"], False),
-        ("seed-paired difference of medians", key["median_contrast"], True),
+        ("replicate-matched difference of medians", key["median_contrast"], True),
         ("strictly per-cell paired effect ({} paired cells)".format(npair),
          key["paired_pooled_effect"], True),
     ]
@@ -343,17 +397,18 @@ def render():
     R.para("The two effect rows answer different questions and both are reported. The "
            "**difference of medians** puts an interval on the contrast exactly as "
            "published (wave-1's median over its own {n1} valid cells, wave-2's over "
-           "its {n2}), seed-paired because the same drawn seed multiset feeds both. "
+           "its {n2}), replicate-matched because one drawn label multiset feeds both. "
            "The **strictly per-cell paired** effect is the reviewer's estimand: the "
            "mean of `wave2_union - wave1_hard` over the {np} cells that have a scored "
            "wave-1 partner, so each cell is its own control (same framework, config, "
-           "task, operator and seed; wave-1 rules vs wave-2 rules). It runs on a "
+           "task, operator and replicate; wave-1 rules vs wave-2 rules). It runs on a "
            "slightly smaller population — {d} of the {n2} valid wave-2 cells have no "
            "wave-1 partner, from the wave-2 O4 landing-probe exclusions and the wave-1 "
            "BASELINE_FAIL exclusions — which is why its point value differs slightly "
            "from the difference of medians. Neither replaces a published number."
            .format(n1=n1, n2=n2, np=npair, d=n2 - npair))
-    R.para("**Both intervals exclude zero by a wide margin.** With five seeds that is "
+    R.para("**Both intervals exclude zero by a wide margin.** With five replicates that "
+           "is "
            "about as strong as this design can state it; see the limitations for what "
            "the interval does and does not cover.")
 
@@ -377,13 +432,13 @@ def render():
             counted(t2, [row], "union", clusters), interval(u), jack(u), u.support,
             pct(s.point), counted(t2, [row], "strict", clusters), interval(s)))
     R.line()
-    R.line("### The scoreboard cannot rank the five standard rows")
+    R.line("### The five standard rows are not distinguishable under this analysis")
     R.line()
-    R.para("Every pairwise seed-paired difference between the five standard rows has a "
-           "95% CI containing zero. The 53.3-55.6% spread across those rows is **not** "
-           "evidence that any framework or config detects better than another; it is "
-           "inside seed noise. That is a limitation of five seeds, not a finding about "
-           "the frameworks.")
+    R.para("Every pairwise replicate-matched difference between the five standard rows "
+           "has a 95% CI containing zero. The 53.3-55.6% spread across those rows is "
+           "**not** evidence that any framework or config detects better than another; "
+           "it sits inside repetition noise. That is a limitation of five replicates, "
+           "not a finding about the frameworks.")
     R.line("| comparison | difference | 95% CI | contains 0 |")
     R.line("|---|---|---|---|")
     pairwise = []
@@ -403,7 +458,7 @@ def render():
            else "**Not every comparison contains zero — read the table.**")
     R.para("One entry deserves its own note, because its interval is degenerate rather "
            "than informative: `langgraph/default` and `langgraph/guardrail` have the "
-           "**identical per-seed union rate on all five seeds** (56.7, 50.0, 60.0, "
+           "**identical per-replicate union rate on all five replicates** (56.7, 50.0, 60.0, "
            "56.7, 50.0). Their +0.2 pp pooled difference is therefore purely a "
            "denominator artifact — 138 vs 144 valid cells, from wave-2 exclusions — "
            "and no resample can push it below zero, which is why its lower endpoint "
@@ -427,7 +482,8 @@ def render():
            "over the cells that have a scored wave-1 partner. The `wave-1 hard` column "
            "here is the same paired column the README publishes.")
     R.line("| row | paired cells | wave-1 hard | wave-2 union | paired effect | 95% CI "
-           "| jackknife range | per-seed effects (pp) | seeds positive | exact sign p |")
+           "| jackknife range | per-replicate effects (pp) | replicates positive "
+           "| exact sign p |")
     R.line("|---|---|---|---|---|---|---|---|---|---|")
     for row in ROW_KEYS:
         stat = diff_stat(tp, [row], "union", "w1", clusters)
@@ -446,9 +502,9 @@ def render():
                    ", ".join("{:+.1f}".format(v) for v in per), positive, k,
                    sign_test_p(positive, k)))
     R.line()
-    R.para("**Every row: all {k}/{k} seeds positive, every 95% CI strictly above "
+    R.para("**Every row: all {k}/{k} replicates positive, every 95% CI strictly above "
            "zero.** Read that as direction and consistency, not as p < 0.05 — the "
-           "exact sign-test p of {p:.4f} is the FLOOR of what {k} seeds can produce, "
+           "exact sign-test p of {p:.4f} is the FLOOR of what {k} replicates can produce, "
            "and it is reported at that floor on every row precisely because the test "
            "is saturated, not because the effect is marginal. The CI, which uses the "
            "magnitudes rather than only the signs, is the informative statement here."
@@ -475,7 +531,7 @@ def render():
     R.line("| Magentic paired effect, flags-only vs wave-1 hard | **{}** | {} | {} | {} |"
            .format(pct(e.point, True), interval(e, True), jack(e, True), e.support))
     R.line()
-    R.para("Per-seed effects on that surface: {}; {}/{} positive. The flags-only "
+    R.para("Per-replicate effects on that surface: {}; {}/{} positive. The flags-only "
            "surface is the one to quote: it is the honest reading of the row and it "
            "drops the 8 union-only cells that fire on stall noise alone."
            .format(", ".join("{:+.1f}".format(v) for v in per), positive, k))
@@ -513,18 +569,88 @@ def render():
         R.line("| {} | {} | {} | {} | {} | {} |".format(
             label, published, pct(e.point), interval(e), jack(e), e.support))
     R.line()
-    a, b = key["o4_fault_anchored"], key["o4_clean_base"]
-    R.para("**The O4 null is now an interval statement, not just a point comparison.** "
-           "The fault-run anchored rate {} and the clean-baseline false-anchor base "
-           "rate {} overlap almost completely. The published conclusion — the O4 flag "
-           "surface carries no signal, and the honest O4 number is the mapping-only "
-           "{} — survives the addition of uncertainty, and is if anything stated more "
-           "firmly by it.".format(interval(a), interval(b),
-                                  pct(key["o4_honest_mapping_only"].point)))
+    R.line("### The O4 null, stated as a contrast rather than as two intervals")
+    R.line()
+    R.para("Two overlapping intervals are not a test. Overlap is neither necessary nor "
+           "sufficient for a null, so the O4 claim is made here the only way it should "
+           "be: as **one contrast with its own interval**, fault runs minus clean "
+           "baselines on the same anchored-flag surface, resampled over the same "
+           "replicate clusters as everything else in this file.")
+    R.line("| contrast | fault arm | clean arm | difference | 95% CI | jackknife range "
+           "| support |")
+    R.line("|---|---|---|---|---|---|---|")
+    key["o4_contrast"] = R.track(
+        "O4 fault-minus-clean contrast (published denominators)",
+        estimate(contrast_stat(rate_stat(t4, ["O4"], "flags", clusters),
+                               rate_stat(tb, ["O4"], "anchored", clusters)), k),
+        sign=True)
+    matched_stat = diff_stat(tm, ["O4"], "fault", "base", clusters)
+    key["o4_matched_contrast"] = R.track(
+        "O4 fault-minus-clean contrast (matched groups)",
+        estimate(matched_stat, k), sign=True)
+    n_matched = total_n(tm, ["O4"], clusters)
+    for label, e, fault_arm, clean_arm in (
+            ("as published ({} fault cells vs all {} baselines)".format(
+                total_n(t4, ["O4"], clusters), total_n(tb, ["O4"], clusters)),
+             key["o4_contrast"],
+             "{} ({})".format(pct(key["o4_fault_anchored"].point),
+                              counted(t4, ["O4"], "flags", clusters)),
+             "{} ({})".format(pct(key["o4_clean_base"].point),
+                              counted(tb, ["O4"], "anchored", clusters))),
+            ("matched groups ({} O4 cells each against ITS OWN cached baseline)".format(
+                n_matched), key["o4_matched_contrast"],
+             "{} ({})".format(pct(100.0 * sum(tm["O4"][c]["fault"] for c in clusters)
+                                  / n_matched),
+                              counted(tm, ["O4"], "fault", clusters)),
+             "{} ({})".format(pct(100.0 * sum(tm["O4"][c]["base"] for c in clusters)
+                                  / n_matched),
+                              counted(tm, ["O4"], "base", clusters)))):
+        R.line("| {} | {} | {} | **{}** | {} | {} | {} |".format(
+            label, fault_arm, clean_arm, pct(e.point, True), interval(e, True),
+            jack(e, True), e.support))
+    R.line()
+    matched_per = per_cluster_values(matched_stat, k)
+    matched_pos, matched_neg, _ = sign_counts(matched_per)
+    R.para("**Both contrasts are null, and the sign of the effect is not even stable "
+           "across them.** The as-published contrast is {a} and the matched-group "
+           "contrast is {b} — opposite signs, both intervals straddling zero by a wide "
+           "margin. The per-replicate matched differences are {p}, {pos} positive and "
+           "{neg} negative out of {k} (exact two-sided sign p = {sp:.4f}). An effect "
+           "whose direction flips when you fix a denominator mismatch is not an effect."
+           .format(a=pct(key["o4_contrast"].point, True) + " "
+                     + interval(key["o4_contrast"], True),
+                   b=pct(key["o4_matched_contrast"].point, True) + " "
+                     + interval(key["o4_matched_contrast"], True),
+                   p=", ".join("{:+.1f}".format(v) for v in matched_per),
+                   pos=matched_pos, neg=matched_neg, k=k,
+                   sp=sign_test_p(matched_pos, k)))
+    R.para("The two rows differ only in the clean arm's denominator, and that difference "
+           "is worth disclosing rather than picking a winner. The as-published contrast "
+           "compares {f} valid O4 fault cells against all {b} baseline runs, including "
+           "the {d} groups whose O4 fault cell was excluded — and those {d} groups "
+           "contribute {x} of the {y} baseline anchors, so they are not a neutral "
+           "addition. The matched row removes the mismatch by scoring each surviving O4 "
+           "cell against the baseline run its own group actually cached. Neither is "
+           "wrong; the as-published row is the direct contrast between the two figures "
+           "the wave-2 package prints, and the matched row is the cleaner estimand."
+           .format(f=total_n(t4, ["O4"], clusters), b=total_n(tb, ["O4"], clusters),
+                   d=total_n(tb, ["O4"], clusters) - n_matched,
+                   x=(sum(tb["O4"][c]["anchored"] for c in clusters)
+                      - sum(tm["O4"][c]["base"] for c in clusters)),
+                   y=sum(tb["O4"][c]["anchored"] for c in clusters)))
+    R.para("**A null contrast is not equivalence.** Neither interval establishes that "
+           "the O4 flag surface behaves identically with and without a fault; both are "
+           "consistent with effects of several percentage points in either direction. "
+           "Establishing equivalence requires an equivalence margin declared in advance, "
+           "and **no equivalence margin was pre-declared** — not in SPEC v0.2.0, not in "
+           "the QC ledger, not here. The honest statement is the weaker one the wave-2 "
+           "package already makes: the O4 anchored-flags surface shows no detectable "
+           "signal over its own clean-run base rate, so the honest O4 number is the "
+           "mapping-only {}.".format(pct(key["o4_honest_mapping_only"].point)))
     R.line("### Clean-baseline false-anchor base rates, with intervals")
     R.line()
     R.para("The published base-rate table (QC finding 3), recomputed over the same 150 "
-           "clean baseline runs with a seed-cluster CI on each rate. These are the "
+           "clean baseline runs with a replicate-cluster CI on each rate. These are the "
            "comparators every anchored-text detection number must be read against.")
     R.line("| operator | published | point | 95% CI | jackknife range | support |")
     R.line("|---|---|---|---|---|---|")
@@ -568,13 +694,16 @@ def render():
     R.line()
     R.para("The pattern is the honest one and it is worth saying plainly. The widest "
            "intervals in this file are (a) the framework-vs-framework comparisons, "
-           "which is exactly why section 2 says the scoreboard cannot be read as a "
-           "ranking, and (b) anything computed on the {}-cell Magentic carve-out, the "
-           "smallest row in the study. A ~{:.0f}-point-wide interval on the Magentic "
-           "paired effect means the *direction* of that row's lift is solid and its "
-           "*magnitude* is not pinned down better than \"very large\". Anyone quoting "
-           "a Magentic lift to one decimal place is over-reading it."
-           .format(total_n(t2, [MAGENTIC], clusters), widest[0][1].width))
+           "which is exactly why section 2 reports those rows as not distinguishable "
+           "under this analysis, (b) anything computed on the {}-cell Magentic "
+           "carve-out, the smallest row in the study, and (c) the O4 null contrast. A "
+           "~{:.0f}-point-wide interval on the Magentic paired effect means the "
+           "*direction* of that row's lift is solid and its *magnitude* is not pinned "
+           "down better than \"very large\". Anyone quoting a Magentic lift to one "
+           "decimal place is over-reading it. And an {:.0f}-point-wide interval around "
+           "the O4 null is the reason section 4 refuses to call it equivalence."
+           .format(total_n(t2, [MAGENTIC], clusters), widest[0][1].width,
+                   key["o4_contrast"].width))
 
     # --- limitations ---------------------------------------------------------------
     R.line("## Limitations")
@@ -584,21 +713,35 @@ def render():
         "CI here is read off a distribution with at most 126 support points, and "
         "several have far fewer — the `support` columns publish the exact number per "
         "statistic. A 2.5% tail on 126 points is about three points of weight. The "
-        "seed-jackknife range is published beside every interval for exactly this "
+        "replicate-jackknife range is published beside every interval for exactly this "
         "reason.",
-        "**A sign test on {} seeds cannot reach p < 0.05.** The two-sided exact minimum "
-        "is {:.4f}. Every per-seed consistency statement in this file is descriptive."
+        "**A sign test on {} replicates cannot reach p < 0.05.** The two-sided exact "
+        "minimum is {:.4f}. Every per-replicate consistency statement in this file is "
+        "descriptive."
         .format(k, sign_test_p(k, k)),
-        "**Seed-level resampling captures seed-to-seed sampling variation only.** It "
+        "**The replicate labels are not random seeds, so nothing here is a seeded "
+        "reproduction.** The values 11-15 never reached the pipeline model or any RNG "
+        "(method, first paragraph). Re-running this study means re-running the matrix "
+        "and drawing five fresh stochastic repetitions, not re-supplying a seed; the "
+        "repetitions are not reproducible runs and these intervals do not claim they "
+        "are. The clustering is justified by the shared cached baseline per "
+        "(framework, config, task, replicate) group, which is a real design-induced "
+        "dependence, not by any randomness the labels controlled.",
+        "**Replicate-level resampling captures repetition-to-repetition variation only.** "
+        "It "
         "cannot capture pipeline-model version drift, framework version drift, "
         "task-suite selection (5 tasks), or operator-suite selection (6 operators). "
         "Those are fixed constants of this design, not sampled populations. If the "
         "pipeline model is silently updated, none of these intervals covers that; the "
         "published version pins and the raw trace corpus are the defence there, not "
         "statistics.",
-        "**The five standard scoreboard rows are statistically indistinguishable from "
-        "each other** (section 2). Sabot's cross-framework spread is not yet a "
-        "ranking, and this file is the reason to stop reading it as one.",
+        "**The five standard scoreboard rows are not distinguishable under this "
+        "analysis** (section 2). Sabot's cross-framework spread is not yet a ranking, "
+        "and this file is the reason to stop reading it as one. Note the direction of "
+        "that claim: failing to distinguish them is not the same as showing them "
+        "equal. No equivalence margin was pre-declared anywhere in this project, so no "
+        "null result here — not the row comparisons, not the O4 contrast — licenses an "
+        "equivalence claim.",
         "**No multiplicity correction is applied.** This file reports {} intervals; at "
         "95% nominal coverage some would be expected to miss even under the null. The "
         "pre-registered headline is a single comparison (SPEC section 7) and is the "

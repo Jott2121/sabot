@@ -213,24 +213,35 @@ publish-regardless commitment):
 Soft tier: judge kappa 0.767 over 68 double-judged pairs, zero exclusions; total
 notice rate 65.5%, an 8.3-point override gap over the hard union.
 
-### Uncertainty: what five seeds can and cannot support
+### Uncertainty: what five replicates can and cannot support
 
-Every number above is a point estimate over five pre-registered seeds, and cells
-within a seed are correlated.
-[UNCERTAINTY.md](harness/runs/wave2/UNCERTAINTY.md) puts intervals on all of them
-with a seed-cluster bootstrap — resampling *seeds*, not cells, because the seed is
-the unit this design actually replicates, and enumerating all 126 distinct resamples
-exactly rather than simulating them. The headline holds: median hard-tier detection
-**16.7% [15.6, 17.8] → 55.0% [52.3, 58.0]**, a seed-paired lift of **+38.3 pp
-[+36.4, +40.6]**; on the 726-cell same-cell paired grid the effect is **+39.4 pp
-[+37.0, +41.4]**, positive on 5/5 seeds in every framework row. Two things that file
-states plainly and the tables above cannot: the five standard rows (53.3–55.6%
-published, 47.8–52.8% strict floor) are **statistically indistinguishable from each
-other** — every pairwise CI contains zero, so this scoreboard is not yet a ranking —
-and a sign test on five seeds can never reach p < 0.05 (exact minimum 0.0625). Its
-limitations section is the point, not an appendix: seed resampling cannot cover
-model-version drift or task-suite selection. Recompute with
-`python scripts/score_uncertainty.py --check`.
+Every number above is a point estimate over five repetitions of the whole matrix, and
+cells within a repetition are correlated.
+[UNCERTAINTY.md](harness/runs/wave2/UNCERTAINTY.md) puts intervals on all of them with
+a replicate-cluster bootstrap, enumerating all 126 distinct resamples exactly rather
+than simulating them. **The field named `seed` is a replicate label, not a random
+seed** — the values 11–15 were never passed to the pipeline model or to any RNG (the
+pre-registered [seeds file](seeds/wave2.json) already calls them "repetition
+identifiers"), so this is a five-replicate sensitivity analysis, not a seeded
+reproduction. Clustering on the replicate is earned by a real design feature: the
+matrix driver caches one no-fault baseline run per (framework, config, task,
+replicate) group and shares it across that group's cells.
+
+The headline holds: median hard-tier detection **16.7% [15.6, 17.8] → 55.0%
+[52.3, 58.0]**, a replicate-matched lift of **+38.3 pp [+36.4, +40.6]**; on the
+726-cell same-cell paired grid the effect is **+39.4 pp [+37.0, +41.4]**, positive on
+5/5 replicates in every framework row. Two things that file states plainly and the
+tables above cannot: the five standard rows (53.3–55.6% published, 47.8–52.8% strict
+floor) are **not distinguishable under this analysis** — every pairwise CI contains
+zero, so this scoreboard is not yet a ranking — and a sign test on five replicates
+can never reach p < 0.05 (exact minimum 0.0625). The O4 null is published there as a
+single contrast rather than two overlapping intervals: fault runs minus clean
+baselines on the anchored-flag surface is **−1.5 pp [−7.3, +4.0]**, and +1.4 pp
+[−4.1, +6.3] once the denominators are matched — null either way, with the sign
+unstable. None of that establishes equivalence; no equivalence margin was ever
+pre-declared, and the file says so. Its limitations section is the point, not an
+appendix: replicate resampling cannot cover model-version drift or task-suite
+selection. Recompute with `python scripts/score_uncertainty.py --check`.
 
 Full scoreboard, exclusion appendix, and all 9 QC footnotes:
 [harness/runs/wave2/WAVE2-RESULTS.md](harness/runs/wave2/WAVE2-RESULTS.md).

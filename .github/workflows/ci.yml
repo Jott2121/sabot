@@ -36,7 +36,7 @@ jobs:
         #     framework install is needed.
         #   * The two judge_live tests are deselected by the `addopts` in
         #     harness/pyproject.toml -- they shell out to the real `claude` CLI.
-        # Expected: 370 passed, 15 skipped, 2 deselected.
+        # Expected: 374 passed, 15 skipped, 2 deselected.
         run: python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 
   scorer:

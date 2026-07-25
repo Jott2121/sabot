@@ -1,4 +1,9 @@
-"""Tests for the v0.2.1 seed-cluster uncertainty estimator.
+"""Tests for the v0.2.1 replicate-cluster uncertainty estimator.
+
+Vocabulary note: the data field is named `seed`, so the fixtures below use that key,
+but it is a REPLICATE LABEL — it was never fed to the pipeline model or to any RNG
+(see sabot/uncertainty.py). The only real RNG seed in play is MC_SEED, the analysis's
+own, used for the Monte-Carlo cross-check.
 
 Three jobs, in order of importance:
 
@@ -8,7 +13,7 @@ Three jobs, in order of importance:
    enough that the whole bootstrap distribution is written out in the assertions.
 2. **Determinism.** The published intervals come from exhaustive enumeration and must
    not depend on `MC_SEED` at all; the Monte-Carlo path must be byte-reproducible from
-   its fixed seed, and must agree with the exhaustive path.
+   its fixed RNG seed, and must agree with the exhaustive path.
 3. **A regression pin of the real generated intervals.** `scripts/score_uncertainty.py`
    freezes its own EXPECTED table; this file asserts the script's recompute still
    matches it AND that the committed `runs/wave2/UNCERTAINTY.md` is byte-identical to a
@@ -28,8 +33,8 @@ from sabot.uncertainty import (MC_SEED, Estimate, cluster_ids, combine, contrast
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-# A dataset small enough to check by hand. One group "a" over two seeds:
-#   seed 1: 1 hit of 2 cells   seed 2: 2 hits of 2 cells   observed 3/4 = 75.0%
+# A dataset small enough to check by hand. One group "a" over two replicates:
+#   replicate 1: 1 hit of 2 cells   replicate 2: 2 hits of 2 cells   observed 3/4 = 75%
 HAND_ROWS = [
     {"group": "a", "seed": 1, "hit": 1, "other": 0},
     {"group": "a", "seed": 1, "hit": 0, "other": 1},
@@ -146,7 +151,7 @@ def test_combine_sums_with_multiplicity(hand_table):
     assert combine(hand_table, ["a"], (0, 2), (1, 2)) == {"n": 4, "hit": 4, "other": 2}
 
 
-def test_cluster_ids_are_the_sorted_distinct_seeds():
+def test_cluster_ids_are_the_sorted_distinct_replicate_labels():
     assert cluster_ids(HAND_ROWS) == (1, 2)
     assert cluster_ids([{"cell": 7}, {"cell": 3}], cluster_key="cell") == (3, 7)
 
@@ -156,8 +161,8 @@ def test_cluster_ids_are_the_sorted_distinct_seeds():
 def test_rate_stat_matches_hand_arithmetic(hand_table):
     stat = rate_stat(hand_table, ["a"], "hit", (1, 2))
     assert stat((1, 1)) == 75.0          # 3 of 4
-    assert stat((2, 0)) == 50.0          # seed 1 twice: 2 of 4
-    assert stat((0, 2)) == 100.0         # seed 2 twice: 4 of 4
+    assert stat((2, 0)) == 50.0          # replicate 1 twice: 2 of 4
+    assert stat((0, 2)) == 100.0         # replicate 2 twice: 4 of 4
 
 
 def test_diff_stat_is_the_mean_per_cell_paired_difference(hand_table):
@@ -195,7 +200,7 @@ def test_an_empty_resampled_group_is_nan_not_a_zero_rate():
 def test_estimate_on_the_hand_dataset_is_fully_hand_checkable(hand_table):
     """k=2: resamples (2,0) w1 -> 50%, (1,1) w2 -> 75%, (0,2) w1 -> 100%; total weight 4.
     2.5th percentile threshold 0.1 -> 50.0; 97.5th threshold 3.9 -> 100.0.
-    Jackknife: drop seed 1 -> 100%, drop seed 2 -> 50%."""
+    Jackknife: drop replicate 1 -> 100%, drop replicate 2 -> 50%."""
     e = estimate(rate_stat(hand_table, ["a"], "hit", (1, 2)), 2)
     assert isinstance(e, Estimate)
     assert e.point == 75.0
@@ -214,8 +219,8 @@ def test_distribution_carries_the_multinomial_weights(hand_table):
 
 def test_jackknife_and_per_cluster_values_are_in_cluster_order(hand_table):
     stat = rate_stat(hand_table, ["a"], "hit", (1, 2))
-    assert jackknife_values(stat, 2) == [100.0, 50.0]   # drop seed 1, then seed 2
-    assert per_cluster_values(stat, 2) == [50.0, 100.0]  # seed 1 alone, seed 2 alone
+    assert jackknife_values(stat, 2) == [100.0, 50.0]   # drop replicate 1, then 2
+    assert per_cluster_values(stat, 2) == [50.0, 100.0]  # replicate 1, then 2, alone
 
 
 def test_a_wider_alpha_gives_a_narrower_interval(hand_table):
@@ -249,7 +254,7 @@ def test_exact_two_sided_sign_test_p_values(positive, n, expected):
     assert sign_test_p(positive, n) == pytest.approx(expected)
 
 
-def test_five_seeds_can_never_reach_the_conventional_threshold():
+def test_five_replicates_can_never_reach_the_conventional_threshold():
     """The limitation the report states in prose, pinned as arithmetic: even a perfect
     5/5 split is p = 0.0625 > 0.05."""
     assert sign_test_p(5, 5) > 0.05
@@ -322,6 +327,54 @@ def test_the_headline_lift_interval_excludes_zero(rendered):
     _, _, key = rendered
     assert key["median_contrast"].lo > 0
     assert key["paired_pooled_effect"].lo > 0
+
+
+def test_the_o4_null_is_published_as_a_contrast_that_straddles_zero(rendered):
+    """The O4 claim must be ONE contrast with an interval, not two overlapping
+    intervals: overlap is neither necessary nor sufficient for a null."""
+    _, _, key = rendered
+    for name in ("o4_contrast", "o4_matched_contrast"):
+        e = key[name]
+        assert e.lo < 0 < e.hi, name
+    # And the direction is not even stable across the two denominator choices, which is
+    # the strongest honest statement available about this surface.
+    assert key["o4_contrast"].point < 0 < key["o4_matched_contrast"].point
+
+
+def test_the_o4_contrast_is_the_difference_of_the_two_published_o4_rates(rendered):
+    """The as-published contrast must be exactly 24.5% - 26.0%, so a reader checking it
+    against the README's two numbers lands on the same place."""
+    _, _, key = rendered
+    expected = key["o4_fault_anchored"].point - key["o4_clean_base"].point
+    assert key["o4_contrast"].point == pytest.approx(expected)
+
+
+def _unwrapped(text):
+    """The report is hard-wrapped at 79 columns, so phrase assertions run against a
+    whitespace-collapsed copy rather than accidentally testing the line breaks."""
+    return " ".join(text.split())
+
+
+def test_the_report_refuses_to_claim_equivalence_from_a_null(rendered):
+    """A null contrast without a pre-declared equivalence margin is not equivalence, and
+    the report has to say so rather than let a reader infer it."""
+    _, text, _ = rendered
+    flat = _unwrapped(text)
+    assert "A null contrast is not equivalence." in flat
+    assert "no equivalence margin was pre-declared" in flat
+    assert "statistically indistinguishable" not in flat
+    assert "not distinguishable under this analysis" in flat
+
+
+def test_the_report_calls_the_labels_replicates_not_random_seeds(rendered):
+    """The replicate labels were never fed to the model or an RNG; the report must not
+    grant them a randomness they do not have."""
+    _, text, _ = rendered
+    flat = _unwrapped(text)
+    assert "is a replicate label, not a random seed" in flat
+    assert "never passed to the pipeline model and never passed to any RNG" in flat
+    assert "replicate-cluster bootstrap" in flat
+    assert "seed-paired" not in flat and "seed-cluster" not in flat
 
 
 def test_the_strict_floor_stays_below_the_published_union_on_every_row(rendered):
