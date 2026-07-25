@@ -340,8 +340,9 @@ construction (no judge output reaches the hard tier).
 `RUN_ERROR` exclusions appear in the dataset. The quarantine directories ship in the
 evidence package.
 
-**Adversarial pre-publication QC.** Before this reveal, four independent QC passes
-ran against the frozen dataset: a from-scratch scoreboard recompute (48/48 published
+**Adversarial pre-publication QC.** Before this reveal, four QC passes — each an
+independent implementation within the project (separate agents, fresh code; not
+third-party replication) — ran against the frozen dataset: a from-scratch scoreboard recompute (48/48 published
 numbers match; kappa reproduced bit-for-bit), an exclusion-genuineness audit (all 72
 verified by independently re-running the committed plans through the deterministic
 checker), a directed attack on the most quotable row (section 6), and a

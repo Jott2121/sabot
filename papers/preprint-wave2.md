@@ -43,8 +43,9 @@ reacting — flag-only detections carry no corrective act, so the
 notice-without-act phenomenon wave 1 named migrates onto the new surface rather
 than disappearing. All raw traces, both quarantine trails — one from a mid-run
 quota outage and one from a mid-run breach of the judge's own tool sandbox that
-the instrument's canary caught (section 6) — an independent 189/189 recompute,
-and the adversarial QC ledger publish as the evidence package.
+the instrument's canary caught (section 6) — a 189/189 recompute by an
+independent implementation within the project, and the adversarial QC ledger
+publish as the evidence package.
 
 ## 1. Introduction
 
@@ -107,8 +108,8 @@ null-result publication commitment.
 
 **Headline (pooled union, configs pooled per framework): LangGraph 55.0%, CrewAI
 53.5%, AutoGen 65.3%; median 55.0% — against wave-1's 16.7%.** An independent
-recompute from raw traces with fresh, spec-transcribed code reproduced all 189
-published rows and every aggregate exactly.
+implementation within the project — fresh, spec-transcribed code reading only
+the raw traces — reproduced all 189 published rows and every aggregate exactly.
 
 | row | wave-1 hard (paired) | wave-2 union | strict floor |
 |---|---|---|---|
