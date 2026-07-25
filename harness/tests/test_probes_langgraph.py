@@ -14,7 +14,7 @@ from sabot.runner import Cell
 from sabot.adapters.langgraph_adapter import LangGraphAdapter
 from sabot.adapters.operator_specs import SPECS, DOWNGRADE_MODEL
 
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 GOLDEN = json.loads((TASKS / "assets" / "T1-golden.json").read_text())
 
 

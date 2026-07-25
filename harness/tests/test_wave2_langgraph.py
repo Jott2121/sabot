@@ -19,7 +19,7 @@ from sabot.adapters.langgraph_adapter import LangGraphAdapter, PIPELINE_MODEL
 from sabot.adapters.wave2_langgraph import Wave2LangGraphAdapter
 from sabot.adapters.operator_specs import SPECS, DOWNGRADE_MODEL
 
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 GOLDEN = json.loads((TASKS / "assets" / "T1-golden.json").read_text())
 
 APPROVE = "FLAGS: none\nVERDICT: APPROVE"

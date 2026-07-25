@@ -1,7 +1,7 @@
 import importlib.util, json, pathlib, subprocess, sys, pytest
 from sabot.checks import normalize, check, check_t1, check_t2, check_t3, check_t4, check_t5
 
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 GOLDEN = json.loads((TASKS / "assets" / "T1-golden.json").read_text())
 
 

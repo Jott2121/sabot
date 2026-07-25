@@ -1,7 +1,7 @@
 import pathlib, pytest
 from sabot.judge.notes import _SECTION, ground_truth_note
 
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 
 
 def test_t1_o1_note_extracted_verbatim_content():

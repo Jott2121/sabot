@@ -7,7 +7,19 @@ from sabot.runner import RunResult
 from sabot.trace import Event, Trace
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
+
+
+@pytest.fixture(autouse=True)
+def _hermetic_key(tmp_path, monkeypatch):
+    # The driver's _load_key reads ~/.config/oracle-gate/openai.key before consulting
+    # OPENAI_API_KEY; a bare CI runner has neither. Point HOME at a tmp dir carrying a
+    # dummy key so these tests never depend on the machine's real credentials.
+    key_dir = tmp_path / ".config" / "oracle-gate"
+    key_dir.mkdir(parents=True)
+    (key_dir / "openai.key").write_text("test-key-not-real")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
 
 def _load_driver():

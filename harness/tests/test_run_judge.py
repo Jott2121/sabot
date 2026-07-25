@@ -10,7 +10,7 @@ from sabot.score import CellVerdict
 from sabot.trace import Event, Trace
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 
 
 def _load():

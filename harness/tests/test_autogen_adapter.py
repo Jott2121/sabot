@@ -31,7 +31,7 @@ from sabot.adapters.autogen_adapter import AutoGenAdapter
 from sabot.adapters.operator_specs import SPECS, DOWNGRADE_MODEL
 from sabot.runner import Cell
 
-TASKS = pathlib.Path.home() / "sabot" / "tasks"
+TASKS = next(p for p in pathlib.Path(__file__).resolve().parents if (p / "tasks").is_dir() and (p / "SPEC.md").is_file()) / "tasks"
 GOLDEN = json.loads((TASKS / "assets" / "T1-golden.json").read_text())
 
 T2_GOOD_SUMMARY = (
