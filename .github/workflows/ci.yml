@@ -36,7 +36,7 @@ jobs:
         #     framework install is needed.
         #   * The two judge_live tests are deselected by the `addopts` in
         #     harness/pyproject.toml -- they shell out to the real `claude` CLI.
-        # Expected: 374 passed, 15 skipped, 2 deselected.
+        # Expected: 423 passed, 15 skipped, 2 deselected.
         run: python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 
   scorer:
@@ -63,3 +63,36 @@ jobs:
         # It also proves the Monte-Carlo cross-check's stream is stable across 3.9-3.13,
         # since the rendered markdown quotes it and is compared byte-for-byte.
         run: python scripts/score_uncertainty.py --check
+
+  submissions:
+    # Third-party scoreboard rows (SUBMITTING.md). Every submitted row must be
+    # recomputable offline from its raw traces by the committed scorers, so the
+    # validator is the merge gate: a red job is a blocked row. Runs on 3.9 because
+    # the validator is held to the same stdlib-only floor as the offline scorers.
+    name: Third-party submissions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.9"
+      - name: Validate every submitted row
+        # submissions/TEMPLATE is the worked skeleton, not a row: it is skipped by
+        # name and is designed to fail validation. A repository holding only the
+        # template skips cleanly with a notice rather than failing on an empty glob.
+        run: |
+          shopt -s nullglob
+          status=0
+          found=0
+          for row in ../submissions/*/; do
+            name=$(basename "$row")
+            if [ "$name" = "TEMPLATE" ]; then continue; fi
+            found=1
+            echo "::group::$name"
+            python scripts/validate_submission.py "$row" || status=1
+            echo "::endgroup::"
+          done
+          if [ "$found" = 0 ]; then
+            echo "::notice::submissions/ holds only TEMPLATE — no third-party rows to validate."
+          fi
+          exit $status

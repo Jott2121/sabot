@@ -256,6 +256,23 @@ traces for all 975 wave-2 runs and both quarantine directories are under
 derivation and the caveat that the margined meter under-reads real billing:
 [harness/SPEND.md](harness/SPEND.md).
 
+## Add your framework to the scoreboard
+
+Anyone can add a row, without the author's involvement. A submission is one scoreboard
+row — one framework at one pinned version, one config, one pipeline model, over these
+five tasks and six operators with at least five replicates — shipped as raw traces plus
+a proposed [SPEC §5](SPEC.md#5-detection-act-mappings) detection-act mapping for that
+framework, which is disputed publicly in the pull request before the row lands. You do
+not compute your own numbers: `harness/scripts/validate_submission.py` recomputes every
+claimed number from your traces using the scorers committed here and fails on a
+one-cell disagreement, and CI runs it on every pull request. Scope is the deterministic
+surfaces only — the mapping surface and the anchored-FLAGS union — because the
+soft-tier judge cannot be replicated by a third party. Submitted rows are labelled
+third-party and publish in a **separate table**: they are never pooled into the
+author-run medians above and never enter the headline. The full route, the honesty bar
+(publish-regardless, itemized exclusions, quarantine discipline), and what the
+maintainer checks: **[SUBMITTING.md](SUBMITTING.md)**.
+
 ## Papers
 
 - [papers/preprint-wave1.md](papers/preprint-wave1.md) — *Sabot: Do Multi-Agent
