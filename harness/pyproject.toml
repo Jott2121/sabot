@@ -11,6 +11,12 @@ dev = ["pytest>=8", "mutmut>=3"]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+# The published trace corpus (runs/) sits next to sabot/ in a flat layout;
+# without this scope, setuptools aborts `pip install -e .` with
+# "Multiple top-level packages discovered in a flat-layout".
+include = ["sabot*"]
+
 [tool.mutmut]
 source_paths = [
     "sabot/acts.py", "sabot/operators.py", "sabot/score.py",
