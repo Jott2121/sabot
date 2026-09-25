@@ -126,7 +126,14 @@ def recompute() -> dict:
     rows = json.loads(ROWS.read_text())
     faults = fault_counts(rows)
     clean = clean_false_flags()
-    return {op: faults[op] + clean[op] for op in OPERATORS}
+    table = {op: faults[op] + clean[op] for op in OPERATORS}
+    # BY-OPERATOR.md and the README state that O4's anchored rate sits below its
+    # clean-run rate (no detection signal). Enforce it rather than assert it in prose.
+    n, anchored, fp, fp_n = table["O4"][0], table["O4"][6], table["O4"][7], table["O4"][8]
+    if not anchored / n < fp / fp_n:
+        raise ValueError("O4 anchored rate is no longer below its clean-run rate; "
+                         "the rendered note and the README's O4 sentence would be false")
+    return table
 
 
 def pct(k: int, n: int) -> str:
