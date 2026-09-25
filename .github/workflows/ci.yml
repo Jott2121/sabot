@@ -63,6 +63,10 @@ jobs:
         # It also proves the Monte-Carlo cross-check's stream is stable across 3.9-3.13,
         # since the rendered markdown quotes it and is compared byte-for-byte.
         run: python scripts/score_uncertainty.py --check
+      - name: Per-operator outcome table, verified against its frozen baseline
+        # Same contract: regroups the published wave-2 cells by operator (the README's
+        # headline table) and checks BY-OPERATOR.md is byte-identical to a fresh render.
+        run: python scripts/score_by_operator.py --check
 
   submissions:
     # Third-party scoreboard rows (SUBMITTING.md). Every submitted row must be
