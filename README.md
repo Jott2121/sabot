@@ -5,31 +5,92 @@
 [![Harness: Apache 2.0](https://img.shields.io/badge/harness-Apache%202.0-blue.svg)](LICENSE-CODE)
 [![SPEC](https://img.shields.io/badge/SPEC-v0.2.1-informational.svg)](SPEC.md)
 
-**Crash-test ratings for agent stacks.** Sabot plants controlled faults inside a running
-agent pipeline and scores what fraction of them the pipeline's **own** checks catch.
+**What the reviewers in agent pipelines actually catch.** Sabot plants controlled faults
+inside running multi-agent pipelines and scores whether the pipeline's **own** reviewer
+and guardrail stages flag them, act on them, or miss them.
 
-> **The finding.** Across 900 faults planted in live LangGraph, CrewAI and
-> AutoGen/Magentic-One runs, the median detection rate by the pipelines' own reviewer
-> stages and guardrails was **16.7%**. The most common outcome in *every* configuration
-> — 51–61% of faults — was a **correct final answer with nothing ever flagging the
-> fault**. Adding one requirement to the reviewer prompt (report what you noticed,
-> before you rule) took the median to **55.0%** on the same 825 paired cells. But
-> corrective action did not follow reporting: on the original surface,
-> recovery-without-detection stayed at 50%. The checks were decorative; the fix makes
-> the noticing *legible*, not acted on.
+> **The findings.** Measured on LangGraph, CrewAI and AutoGen/Magentic-One, with every
+> detection adjudicated deterministically:
+>
+> 1. **An action that never happened is invisible.** When a write tool reported success
+>    but wrote nothing, no reviewer flagged it and the task failed in every valid cell:
+>    **0 of 119 flagged, 0 of 119 correct**, on all three frameworks. Reviewers judge
+>    text, and a missing side effect leaves nothing in the text to quote.
+> 2. **Faults in the text get noticed; faults in the process mostly do not.** Once
+>    reviewers had to report what they noticed before ruling, a wrong value in a tool
+>    result was flagged in **92.4%** of cells, an altered handoff in 88.2%, and a stale,
+>    superseded document in 87.4%. A silently skipped review step was flagged in
+>    **31.9%**, and a silently downgraded model in 26.9%. Counting only the anchored
+>    flags, the O4 rate is 22.7%, below the 24.8% at which that same rule fires on
+>    clean runs: no detection signal at all.
+> 3. **Noticing is not acting.** A wrong tool value was flagged in 92.4% of cells but
+>    met with a corrective act (a reject, retry, block or escalation) in **40.3%**, and
+>    37.8% of cells flagged the wrong value and still ended with the wrong answer.
+>
+> The change behind those numbers is one requirement added to the reviewer prompt:
+> report every inconsistency you noticed, quoting the values, *before* you rule. It
+> raised median detection from **16.7%** to **55.0%** on the same 825 paired cells. It
+> made the noticing legible. It did not make pipelines act on it.
 >
 > Spec and anchors were registered publicly **before any scored run**. Negative
-> results publish at equal prominence. [Wave-1 results](#wave-1-results-2026-07-23) ·
+> results publish at equal prominence. [Findings by fault type](#the-findings-by-fault-type) ·
+> [Wave-1 results](#wave-1-results-2026-07-23) ·
 > [Wave-2 results](#wave-2-results-2026-07-24-the-fix-measured) · [Papers](papers/) ·
 > [Limitations](#wave-2-results-2026-07-24-the-fix-measured)
 
-One pipeline model, five replicate runs per cell, pinned framework versions — these are results
-about these frameworks with this model at these versions, not laws of nature.
+**What is being measured.** Teams building on agent frameworks add self-verification:
+reviewer agents, critic stages, guardrail callbacks. Sabot measures what those checks
+catch, in reference pipelines it builds on each framework from that framework's
+documented surfaces: a reviewer agent that ends with a verdict token, plus the
+framework's best-documented guardrail mechanism in the guardrail configuration (for
+AutoGen, the Magentic-One orchestrator, which has no reviewer). The reviewer instructions
+Sabot writes are **byte-identical across all three frameworks** for every task, with each
+framework wrapping them in its own agent scaffolding, and every cell runs one pipeline
+model (`gpt-5.6-terra`) at pinned framework versions. So these are results
+about this reviewer design with this model. The three frameworks show the pattern holds
+across orchestrators: the five reviewer-bearing rows all land between 53% and 56% on
+wave-2 detection. They are not a ranking of frameworks (see
+[Uncertainty](#uncertainty-what-five-replicates-can-and-cannot-support)), and they are
+not laws of nature.
 
-Every serious agent framework ships self-verification: reviewer agents, critic stages,
-guardrail callbacks, voting. The industry's reliability story rests on those checks
-working. Sabot is a standard (a frozen metric spec), a harness (a runnable tool), and a
-public scoreboard measuring whether they do.
+Sabot is a standard (a frozen metric spec), a harness (a runnable tool), and a public
+scoreboard.
+
+## The findings by fault type
+
+The six fault operators are different kinds of fault, and a single median across them
+hides that. Wave-2 cells on the five reviewer-bearing rows, regrouped by operator; no
+number is rescored:
+
+| fault (operator) | flagged | anchored only | clean-run false-flag | acted on | answer still right |
+|---|---:|---:|---:|---:|---:|
+| O6 write reports success, writes nothing | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
+| O1 tool returns a wrong value | 92.4% | 92.4% | 29.6% | 40.3% | 58.0% |
+| O3 handoff message altered | 88.2% | 87.4% | 12.0% | 85.7% | 94.1% |
+| O5 stale document labeled superseded | 87.4% | 87.4% | 19.2% | 0.8% | 100.0% |
+| O2 review step silently skipped | 31.9% | 31.1% | 6.4% | 13.4% | 94.1% |
+| O4 worker model silently downgraded | 26.9% | 22.7% | 24.8% | 11.8% | 96.6% |
+
+119 valid cells per operator. *Flagged* is the wave-2 hard-tier union surface (the
+frozen wave-1 mapping or an anchored FLAGS line). *Anchored only* is the FLAGS half by
+itself, and *clean-run false-flag* is the rate at which that anchored rule fires on a
+clean baseline with no fault present, so compare those two. For O4 the anchored rate
+sits below its clean rate: no detection signal. *Acted on* is a corrective act (a
+reported flag alone does not count).
+For O5, a low acted-on rate is the right outcome: the answer was correct in every cell,
+so a rejection would have been wrong.
+
+**What recovery-without-detection does and does not show.** The earlier headline, a
+correct final answer with nothing flagging the fault, is real, but in wave 2 it is
+concentrated in O2 and O4: they account for 165 of the 194 such cells (85.1%), and in
+the cells where nothing was flagged, their answers were right 100% (O2, 81 of 81) and
+96.6% (O4, 84 of 87) of the time. For those faults the outcome cannot distinguish a
+check that failed from a fault that never changed the answer. Separating the two needs a control arm that injects the fault with
+the reviewer disabled, which neither wave ran.
+
+Full table with counts, and the population definition: [BY-OPERATOR.md](harness/runs/wave2/BY-OPERATOR.md).
+Recompute it offline, and verify it against its frozen baseline:
+`python scripts/score_by_operator.py --check` (from `harness/`).
 
 ## The metric in one paragraph
 
@@ -115,6 +176,11 @@ That is the finding, in one cell. The protocol bought visibility, not correction
   ([papers/](papers/)) and the wave-2 evidence package. SPEC v0.2.0 — the
   anomaly-first protocol, all 30 anchors, and five predictions — was tagged
   *before any wave-2 scored run*.
+- **2026-09-25:** README reorganized around the results by fault type, and its framing
+  corrected: the reviewer stages are Sabot's reference pipelines, with identical prompts
+  across frameworks, not reviewers the frameworks ship. No number was rescored; SPEC and
+  papers are unchanged. New `scripts/score_by_operator.py` regenerates the by-operator
+  table from the published rows and is checked in CI.
 
 ## Wave-1 results (2026-07-23)
 
@@ -276,7 +342,9 @@ maintainer checks: **[SUBMITTING.md](SUBMITTING.md)**.
 ## Papers
 
 - [papers/preprint-wave1.md](papers/preprint-wave1.md) — *Sabot: Do Multi-Agent
-  Frameworks' Own Checks Detect Injected Faults?* (the 16.7% scoreboard)
+  Frameworks' Own Checks Detect Injected Faults?* (the 16.7% scoreboard). The papers are
+  left as published; for what the reviewer stages are, read "What is being measured"
+  at the top of this README rather than the title.
 - [papers/preprint-wave2.md](papers/preprint-wave2.md) — *The Checks Were Decorative
   — and the Fix Is Measurable* (the anomaly-first protocol)
 
