@@ -1,0 +1,16 @@
+---
+description: Use when writing or changing README numbers, scorer output, papers, results, or PR descriptions with metrics
+globs: "README.md,docs/**,eval/**,runs/**,reports/**,papers/**,WRITEUP.md,CHANGELOG.md,SPEC.md,SUBMITTING.md"
+alwaysApply: false
+---
+# Benchmarks and public claims
+
+- Pre-registration in this repo is `SPEC.md` (versioned amendments) plus `seeds/wave1.json` and `seeds/wave2.json`, committed before scored runs. Do not add a parallel `docs/PREREG.md`.
+- Every published number links to the command, the commit, the raw artifact, and the date. The commands are the `--check` scorers named in AGENTS.md. They compare byte-for-byte to the frozen baselines.
+- Include the baseline and the null. If a result is not significant, say so in the headline, not a footnote. Wave-2 uncertainty already does this; do not delete those caveats.
+- State limits up front (n, replicates, prompt shape, model versions, cost). The pipeline model for the published matrix is `gpt-5.6-terra`.
+- Don't round in your favor. Show the published intervals where they exist (`score_uncertainty.py`).
+- Never edit raw run outputs under `harness/runs/`. Supersede with a new run and a note. `score_wave2.py` without a review strips the QC footnote in `WAVE2-RESULTS.md`; do not commit that rewrite.
+- If a README number changes, the PR must show before → after and the `--check` command that produced it.
+- Papers in `papers/` stay as published. A number correction goes in a dated note, not a silent edit of the paper body.
+- Cross-check numbers that appear in more than one place (README, `harness/RESULTS.md`, `BY-OPERATOR.md`, papers) and fix drift in the same PR.

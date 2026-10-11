@@ -1,0 +1,13 @@
+---
+description: Core working principles for sabot — receipts, honest benchmarks, fail-closed, no employer data
+alwaysApply: true
+---
+# Core principles (always on)
+
+- Personal work only. Never introduce Lockheed Martin data, names, acronyms, documents, or realistic HR records. Task fixtures in `tasks/` are the committed fictional corpus. If unsure where content came from, stop and ask.
+- Every claim needs a receipt. In this repo that is `harness/scripts/score_strict.py --check`, `score_uncertainty.py --check`, and `score_by_operator.py --check`. Do not add a second scorer that re-derives those tables.
+- Report nulls and regressions as prominently as wins. State n, replicate labels, model + version, date, cost.
+- Decision paths fail closed (deny on error, timeout, or missing input). Never weaken a guard, threshold, coverage floor, or scorer `EXPECTED` table to get green.
+- Done = the pytest command and the three `--check` commands in AGENTS.md pass, and the output is pasted in the PR. New behavior ships with a test that fails without it.
+- No irreversible actions: no force-push, history rewrite, release tagging, package publishing, or posting. Open a PR.
+- See AGENTS.md for commands. Run them; don't guess. The shell guard blocks `git pull --rebase`.
