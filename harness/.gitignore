@@ -9,6 +9,7 @@ traces/
 mutants/
 .mutmut-cache
 mutmut-stats.json
+.coverage
 *.egg-info/
 .venv-*/
 # runs/ is ignored in the private working repository so that live run output never
