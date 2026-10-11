@@ -163,9 +163,21 @@ def test_explicit_paths_mode(tmp_path, capsys):
     assert "draft.md:1: blocked term" in out.out
 
 
-def test_committed_hash_list_is_present_and_well_formed():
+# Digests only, one per surface form (single word, abbreviation, two-word phrase,
+# words run together). Removing any of them from the committed list must fail
+# here; new digests may be added to the list without touching this set.
+PINNED_DIGESTS = frozenset({
+    "cb5c36fe59056a6a1afb4b133d30981f672257d6c372bace38798b504fc0c6f2",
+    "8c6a10a10f5de2282f957c71717b5a15ab371af5bd781b4d38e72f556964da06",
+    "c376013522845bfce25461e2335a75a6808fd9365beba1c8ad75200ff2488ea3",
+    "f277af9c64194778d745db1e6f142c724110717970ed251b4611f28e683957ae",
+})
+
+
+def test_committed_hash_list_keeps_every_pinned_digest():
     hashes = scan.load_hashes(REPO / ".github" / "blocked-terms.sha256")
-    assert len(hashes) >= 3
+    missing = PINNED_DIGESTS - hashes
+    assert not missing, f"digests removed from the blocked-term list: {sorted(missing)}"
 
 
 def test_real_checkout_is_clean(capsys):
