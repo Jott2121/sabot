@@ -36,7 +36,7 @@ jobs:
         #     framework install is needed.
         #   * The two judge_live tests are deselected by the `addopts` in
         #     harness/pyproject.toml -- they shell out to the real `claude` CLI.
-        # Expected: 441 passed, 15 skipped, 2 deselected.
+        # Expected: 446 passed, 15 skipped, 2 deselected.
         run: python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 
   scorer:
@@ -125,8 +125,10 @@ jobs:
     # Employer names are never written in the repo, not even here: the scan
     # hashes every word and two-word phrase of every tracked file (results and
     # traces included) against .github/blocked-terms.sha256, and fails closed
-    # if that list is missing, empty, or malformed. The optional BLOCKED_TERMS
-    # secret (comma-separated) adds terms; unset, it adds nothing.
+    # if that list is missing, empty, or malformed. AGENTS.md, .cursor/ and
+    # .github/ are scanned too; only the hash file and build junk are skipped.
+    # The optional EMPLOYER_MARKERS secret (a regex alternation) adds patterns
+    # on top of the hash list. Unset, the hash list alone still gates the job.
     name: No employer data
     runs-on: ubuntu-latest
     defaults:
@@ -139,7 +141,7 @@ jobs:
           python-version: "3.11"
       - name: Block employer names (hashed list, whole tree)
         env:
-          BLOCKED_TERMS: ${{ secrets.BLOCKED_TERMS }}
+          EMPLOYER_MARKERS: ${{ secrets.EMPLOYER_MARKERS }}
         run: python harness/scripts/scan_blocked_terms.py
       - name: Block export-control markers and committed build junk
         # The policy files must name these markers in order to forbid them, so

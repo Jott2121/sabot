@@ -43,7 +43,7 @@ def test_clean_tree_passes(tmp_path, capsys):
     root = _git_repo(tmp_path, {"README.md": "nothing to see\n", "results/a.json": "{}"})
     code, out = _run(root, capsys)
     assert code == 0
-    assert "no blocked terms in 3 file(s)" in out.out
+    assert "no blocked terms in 2 file(s)" in out.out
 
 
 @pytest.mark.parametrize(
@@ -75,13 +75,43 @@ def test_single_word_is_whole_word_only(tmp_path, capsys):
     assert _run(root2, capsys)[0] == 1
 
 
-def test_env_terms_are_added(tmp_path, capsys):
-    root = _git_repo(tmp_path, {"a.md": "a fizzwick memo\n"})
+def test_employer_markers_regex_adds_patterns(tmp_path, capsys):
+    root = _git_repo(tmp_path, {"a.md": "ok\na Fizz-Wick memo\n"})
     assert _run(root, capsys)[0] == 0
-    code, out = _run(root, capsys, environ={"BLOCKED_TERMS": " , Fizzwick ,other"})
+    code, out = _run(root, capsys, environ={"EMPLOYER_MARKERS": r"fizz-?wick|\bqqzz\b"})
     assert code == 1
-    assert "a.md:1: blocked term" in out.out
-    assert "fizzwick" not in out.out.lower()
+    assert "a.md:2: blocked term (EMPLOYER_MARKERS)" in out.out
+    assert "fizz" not in out.out.lower()
+
+
+def test_hash_list_still_catches_with_markers_unset_or_blank(tmp_path, capsys):
+    root = _git_repo(tmp_path, {"a.md": f"{PLANTED}\n"})
+    assert _run(root, capsys)[0] == 1
+    assert _run(root, capsys, environ={"EMPLOYER_MARKERS": "  "})[0] == 1
+    assert _run(root, capsys, environ={"EMPLOYER_MARKERS": "unrelated"})[0] == 1
+
+
+@pytest.mark.parametrize("pattern", ["(unclosed", "a|", ".*"], ids=["invalid", "empty-alt", "matches-empty"])
+def test_bad_employer_markers_fail_closed(tmp_path, capsys, pattern):
+    root = _git_repo(tmp_path, {"a.md": "ok\n"})
+    code, out = _run(root, capsys, environ={"EMPLOYER_MARKERS": pattern})
+    assert code == 2
+    assert "FAILED CLOSED" in out.err
+
+
+def test_policy_files_are_scanned_and_hash_file_is_not(tmp_path, capsys):
+    root = _git_repo(tmp_path, {"AGENTS.md": "ok\n", ".cursor/rules/a.mdc": "ok\n", ".github/workflows/ci.yml": "ok\n"})
+    hash_file = root / ".github" / "blocked-terms.sha256"
+    code, out = _run(root, capsys, environ={"EMPLOYER_MARKERS": scan.digest(PLANTED)[:16]})
+    assert code == 0
+    assert "in 3 file(s)" in out.out
+    for rel in ("AGENTS.md", ".cursor/rules/a.mdc", ".github/workflows/ci.yml"):
+        (root / rel).write_text(f"x\n{PLANTED}\n")
+    code, out = _run(root, capsys)
+    assert code == 1
+    for rel in ("AGENTS.md", ".cursor/rules/a.mdc", ".github/workflows/ci.yml"):
+        assert f"{rel}:2: blocked term" in out.out
+    assert hash_file.name not in out.out
 
 
 def test_generated_junk_is_excluded_but_data_folders_are_not(tmp_path, capsys):

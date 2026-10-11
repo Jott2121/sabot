@@ -17,7 +17,7 @@ Sabot plants controlled faults inside running multi-agent pipelines (LangGraph, 
 Two version floors. Offline scorers under `harness/scripts/` are **Python 3.9+, standard library only** — no install. The harness itself is **Python 3.11+** plus pinned framework venvs (`harness/scripts/setup_venvs.sh`). Commands below are from `harness/`.
 
 ```bash
-# tests (Python 3.11+). CI comment: 441 passed, 15 skipped, 2 deselected.
+# tests (Python 3.11+). CI comment: 446 passed, 15 skipped, 2 deselected.
 python -m pip install --upgrade pip "pytest>=8" pytest-cov
 python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 
@@ -37,7 +37,7 @@ A task is not done until the pytest command and the three `--check` commands pas
 
 ## Non-negotiables
 
-1. **No employer data. Ever.** Personal work on personal equipment. Never add, paste, paraphrase, or anonymize anything from an employer's systems, documents, tickets, chats, workforce data, internal URLs, or proprietary/export-controlled material. No employer names anywhere, no internal acronyms, no realistic HR records. CI's `No employer data` job enforces this from the hashed list in `.github/blocked-terms.sha256` (`harness/scripts/scan_blocked_terms.py`); do not write blocked terms in plaintext to explain or test it. The author byline names Jeff Otterson and does not name an employer; do not add one. Task sources in `tasks/` are the committed fictional corpus.
+1. **No employer data. Ever.** Personal work on personal equipment. Never add, paste, paraphrase, or anonymize anything from an employer's systems, documents, tickets, chats, workforce data, internal URLs, or proprietary/export-controlled material. No employer names anywhere, no internal acronyms, no realistic HR records. CI's `No employer data` job enforces this from the hashed list in `.github/blocked-terms.sha256` (`harness/scripts/scan_blocked_terms.py`), plus an optional `EMPLOYER_MARKERS` regex secret; do not write blocked terms in plaintext to explain or test it. The author byline names Jeff Otterson and does not name an employer; do not add one. Task sources in `tasks/` are the committed fictional corpus.
 2. **Receipts over hype.** Every number in the README, docs, papers, or a PR must be reproducible from a committed command. The receipt mechanism is the three `--check` scripts above (and `validate_submission.py` for a submitted row). Link the command. No "blazing fast", "SOTA", or "production-grade" without a measurement.
 3. **Honest benchmarks.** Report nulls and regressions at the same prominence as wins. State n, replicate labels, model + version, date, and cost. The pre-registration is `SPEC.md` plus `seeds/` (committed before scored runs). Do not add a parallel `docs/PREREG.md`. Never tune on the test set. Never delete an inconvenient run; mark it superseded with a reason.
 4. **Fail closed.** Gates, validators, and guards deny on error, timeout, missing input, or unparseable output. Never weaken a guard to make a test pass. Never catch-and-ignore exceptions in a decision path.
