@@ -17,7 +17,7 @@ Sabot plants controlled faults inside running multi-agent pipelines (LangGraph, 
 Two version floors. Offline scorers under `harness/scripts/` are **Python 3.9+, standard library only** — no install. The harness itself is **Python 3.11+** plus pinned framework venvs (`harness/scripts/setup_venvs.sh`). Commands below are from `harness/`.
 
 ```bash
-# tests (Python 3.11+). CI comment: 423 passed, 15 skipped, 2 deselected.
+# tests (Python 3.11+). CI comment: 441 passed, 15 skipped, 2 deselected.
 python -m pip install --upgrade pip "pytest>=8" pytest-cov
 python -m pytest tests/ -q --ignore=tests/test_venvs.py --cov --cov-report=term-missing --cov-fail-under=90
 

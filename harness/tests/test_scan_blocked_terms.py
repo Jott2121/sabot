@@ -69,9 +69,9 @@ def test_joined_form_listed_once_catches_both_spellings(tmp_path, capsys, text):
 
 
 def test_single_word_is_whole_word_only(tmp_path, capsys):
-    root = _git_repo(tmp_path, {"a.md": "llm lms xlm\n"}, hashes=("lm",))
+    root = _git_repo(tmp_path, {"a.md": "aqx qxs zqxz\n"}, hashes=("qx",))
     assert _run(root, capsys)[0] == 0
-    root2 = _git_repo(tmp_path / "b", {"a.md": "the LM team\n"}, hashes=("lm",))
+    root2 = _git_repo(tmp_path / "b", {"a.md": "the QX team\n"}, hashes=("qx",))
     assert _run(root2, capsys)[0] == 1
 
 
