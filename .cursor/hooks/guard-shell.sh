@@ -13,45 +13,82 @@ ask()  { printf '{"permission":"ask","user_message":"%s"}\n' "$1"; exit 0; }
 if [ -z "${cmd//[[:space:]]/}" ]; then
   deny "Shell guard blocked a missing command."
 fi
-# Match rewrite flags as their own arguments anywhere, not only beside the
-# subcommand. `git push origin --force`, `git push origin -f`, and
-# `git reset HEAD --hard` are denied. A short cluster that contains f
-# (`-fu`, `-uf`) is a force flag only while the current command is push, so
-# `curl -fsSL && git push` is not treated as a force-push. A plain `git push`
-# still asks below.
-set -f
-push=0
-reset=0
-force=0
-hard=0
-verb=
-for token in $cmd; do
-  sep=0
-  case "$token" in
-    '&&'|'||'|'|'|'&'|';') verb=; continue ;;
-    *';'*) token="${token%%;*}"; sep=1 ;;
-  esac
-  token="${token#\'}"
-  token="${token%\'}"
-  token="${token#\"}"
-  token="${token%\"}"
-  case "$token" in
-    push) push=1; verb=push ;;
-    reset) reset=1; verb=reset ;;
-    --force|--force=*|--force-with-lease|--force-with-lease=*|-f|-f[A-Za-z]*|-[A-Za-z]*f|-[A-Za-z]*f[A-Za-z]*)
-      [ "$verb" = push ] && force=1 ;;
-    --hard|--hard=*)
-      [ "$verb" = reset ] && hard=1 ;;
-  esac
-  [ "$sep" -eq 1 ] && verb=
-done
-set +f
-if [ "$push" -eq 1 ] && [ "$force" -eq 1 ]; then
-  deny "Force-push blocked by repo policy."
-fi
-if [ "$reset" -eq 1 ] && [ "$hard" -eq 1 ]; then
-  deny "History rewrite blocked by repo policy."
-fi
+# Match rewrite flags as their own arguments anywhere in that command, not
+# only beside the subcommand. `git push origin --force`, `git push origin -f`,
+# `git push -fu`, and `git reset HEAD --hard` are denied. A newline, `;`,
+# `&&`, or `|` starts a new command, so `git push` then `curl -fsSL` is not a
+# force-push. A backslash-newline is a continuation and stays one command.
+# A plain `git push` still asks below.
+rewrite=$(printf '%s' "$cmd" | python3 -c '
+import re, sys
+text = sys.stdin.read()
+segs = []
+buf = []
+i = 0
+quote = None
+while i < len(text):
+    c = text[i]
+    if quote:
+        buf.append(c)
+        if c == quote:
+            quote = None
+        i += 1
+        continue
+    if c in ("'\''", "\""):
+        quote = c
+        buf.append(c)
+        i += 1
+        continue
+    if c == "\\" and i + 1 < len(text) and text[i + 1] == "\n":
+        buf.append(" ")
+        i += 2
+        continue
+    if c == "\n" or c == ";" or c == "|":
+        segs.append("".join(buf))
+        buf = []
+        i += 1
+        continue
+    if text.startswith("&&", i) or text.startswith("||", i):
+        segs.append("".join(buf))
+        buf = []
+        i += 2
+        continue
+    if c == "&":
+        segs.append("".join(buf))
+        buf = []
+        i += 1
+        continue
+    buf.append(c)
+    i += 1
+segs.append("".join(buf))
+short_force = re.compile(r"^-[A-Za-z]*f[A-Za-z]*$")
+saw_force = saw_hard = False
+for seg in segs:
+    verb = None
+    for raw in seg.split():
+        token = raw[1:-1] if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in ("'\''", "\"") else raw
+        if token == "push":
+            verb = "push"
+        elif token == "reset":
+            verb = "reset"
+        elif verb == "push" and (
+            token in ("-f", "--force", "--force-with-lease")
+            or token.startswith("--force=")
+            or token.startswith("--force-with-lease=")
+            or short_force.match(token)
+        ):
+            saw_force = True
+        elif verb == "reset" and (token == "--hard" or token.startswith("--hard=")):
+            saw_hard = True
+if saw_force:
+    sys.stdout.write("force")
+elif saw_hard:
+    sys.stdout.write("hard")
+')
+case "$rewrite" in
+  force) deny "Force-push blocked by repo policy." ;;
+  hard) deny "History rewrite blocked by repo policy." ;;
+esac
 case "$cmd" in
   *"rebase"*) deny "History rewrite blocked by repo policy." ;;
   *"git tag"*|*"twine upload"*|*"uv publish"*|*"gh release"*) deny "Releases/publishing are human-only." ;;
