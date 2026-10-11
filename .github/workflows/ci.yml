@@ -158,7 +158,7 @@ jobs:
             echo "git grep failed (exit $status)"
             exit 1
           fi
-          if git ls-files | grep -E '(__pycache__/|\.pyc$|^\.coverage$)'; then
+          if git ls-files | grep -E '(__pycache__/|\.pyc$|(^|/)\.coverage$)'; then
             echo "committed build junk found"
             exit 1
           fi
