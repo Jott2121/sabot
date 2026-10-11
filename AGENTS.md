@@ -47,7 +47,7 @@ A task is not done until the pytest command and the three `--check` commands pas
 
 ## Shell guard
 
-`.cursor/hooks/guard-shell.sh` runs before shell commands matching `git push`, `git reset`, `git rebase`, `git pull`, `git tag`, publish, curl, wget, or `rm -rf`. It fails closed. The matcher includes `git pull`, and the deny rule matches the substring `rebase`, so **`git pull --rebase`** is blocked along with `git rebase`. A payload with no command string is denied. Force-push flags (`--force`, `--force-with-lease`, `-f`) are denied anywhere in a push, including `git push origin --force` and `git push origin -f`. `--hard` is denied anywhere in a reset, including `git reset HEAD --hard`. Tags and publishing are blocked. `git push` and network fetches ask first. Plain `git pull` is allowed. Do not loosen the hook to get a command through.
+`.cursor/hooks/guard-shell.sh` runs before shell commands matching `git push`, `git reset`, `git rebase`, `git pull`, `git tag`, publish, curl, wget, or `rm -rf`. It fails closed. The matcher includes `git pull`, and the deny rule matches the substring `rebase`, so **`git pull --rebase`** is blocked along with `git rebase`. A payload with no command string is denied. Force-push flags (`--force`, `--force-with-lease`, `-f`, and a short cluster that contains `f`, such as `-fu`) are denied anywhere in a push, including `git push origin --force` and `git push origin -f`. `--hard` is denied anywhere in a reset, including `git reset HEAD --hard`. Tags and publishing are blocked. `git push` and network fetches ask first. Plain `git pull` is allowed. Do not loosen the hook to get a command through.
 
 ## Code style
 

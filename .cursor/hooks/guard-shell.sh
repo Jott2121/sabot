@@ -15,23 +15,35 @@ if [ -z "${cmd//[[:space:]]/}" ]; then
 fi
 # Match rewrite flags as their own arguments anywhere, not only beside the
 # subcommand. `git push origin --force`, `git push origin -f`, and
-# `git reset HEAD --hard` are denied. A plain `git push` still asks below.
+# `git reset HEAD --hard` are denied. A short cluster that contains f
+# (`-fu`, `-uf`) is a force flag only while the current command is push, so
+# `curl -fsSL && git push` is not treated as a force-push. A plain `git push`
+# still asks below.
 set -f
 push=0
 reset=0
 force=0
 hard=0
+verb=
 for token in $cmd; do
+  sep=0
+  case "$token" in
+    '&&'|'||'|'|'|'&'|';') verb=; continue ;;
+    *';'*) token="${token%%;*}"; sep=1 ;;
+  esac
   token="${token#\'}"
   token="${token%\'}"
   token="${token#\"}"
   token="${token%\"}"
   case "$token" in
-    push) push=1 ;;
-    reset) reset=1 ;;
-    --force|--force=*|--force-with-lease|--force-with-lease=*|-f) force=1 ;;
-    --hard|--hard=*) hard=1 ;;
+    push) push=1; verb=push ;;
+    reset) reset=1; verb=reset ;;
+    --force|--force=*|--force-with-lease|--force-with-lease=*|-f|-f[A-Za-z]*|-[A-Za-z]*f|-[A-Za-z]*f[A-Za-z]*)
+      [ "$verb" = push ] && force=1 ;;
+    --hard|--hard=*)
+      [ "$verb" = reset ] && hard=1 ;;
   esac
+  [ "$sep" -eq 1 ] && verb=
 done
 set +f
 if [ "$push" -eq 1 ] && [ "$force" -eq 1 ]; then
