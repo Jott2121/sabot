@@ -32,7 +32,7 @@ Run from `harness/`. Capture exit codes and the last ~20 lines of each command.
 
    List every number that changed. For each, the reproducing command is one of the `--check` scripts (or `python scripts/validate_submission.py <row>` for a third-party submission). If you cannot reproduce it, mark it UNVERIFIED and stop. Do not open the PR as ready.
 
-4. **Employer data and secrets.** Grep the diff for the patterns in `.cursor/rules/40-security-and-data.mdc`. The author byline (README `## Author`, paper headers, `CITATION.cff`) names Jeff Otterson and does not name an employer. Any employer marker, including one added to that byline, is a stop. Report it. Do not "anonymize" it into the repo.
+4. **Employer data and secrets.** From the repo root, run `python harness/scripts/scan_blocked_terms.py` (exit 0 required; it checks employer names against the hashed list in `.github/blocked-terms.sha256`). Then check the diff against the rules in `.cursor/rules/40-security-and-data.mdc`. The author byline (README `## Author`, paper headers, `CITATION.cff`) names Jeff Otterson and does not name an employer. Any employer marker, including one added to that byline, is a stop. Report it. Do not "anonymize" it into the repo.
 
 5. **Thresholds.** Confirm `--cov-fail-under` is still 90, no scorer `EXPECTED` entry was edited to match a new output, and no test was skipped, xfailed, or removed to get green.
 

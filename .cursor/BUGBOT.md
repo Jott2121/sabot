@@ -8,10 +8,11 @@ Flag as **blocking**:
 2. Lowered thresholds: `--cov-fail-under` (floor is 90), mutation floors, scorer `EXPECTED` tables, or retry/timeout bounds removed.
 3. Tests deleted, skipped, xfailed, or assertions weakened without a stated reason in the PR body. `tests/test_venvs.py` ignored in CI, and `judge_live` deselected via `addopts`, are existing and intentional.
 4. README, `SPEC.md`, papers, or results numbers that changed without a reproducing command. The receipt commands are `harness/scripts/score_strict.py --check`, `score_uncertainty.py --check`, and `score_by_operator.py --check`. A new parallel checker that re-derives those tables is a bug.
-5. Employer or corporate data: company names (Lockheed, LM, LMCO), internal acronyms, CUI/ITAR markings, real-looking employee records, internal URLs. The author byline (README, papers, `CITATION.cff`) names Jeff Otterson and does not name an employer. A new employer mention anywhere else is blocking.
+5. Employer or corporate data: the author's employer's name or abbreviations (CI checks them against the hashed list in `.github/blocked-terms.sha256`), its programs, products, or sites, internal acronyms, CUI/ITAR markings, real-looking employee records, internal URLs. The author byline (README, papers, `CITATION.cff`) names Jeff Otterson and does not name an employer. A new employer mention anywhere else is blocking.
 6. Secrets, tokens, `.env` files, or absolute personal paths committed.
 7. Unpinned GitHub Actions (must be a full SHA) or widened workflow `permissions:`.
 8. Live network or model calls added to the default test path.
+9. The blocked-term scan (`harness/scripts/scan_blocked_terms.py`, `.github/blocked-terms.sha256`) passing on a missing, empty, or malformed hash file, digests removed, or paths excluded beyond generated junk. A plaintext blocked term added anywhere, including tests and docs, is blocking.
 
 Flag as **non-blocking**:
 
