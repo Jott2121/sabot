@@ -9,5 +9,5 @@ alwaysApply: false
 - PR body sections (required): What · Why · How verified (exact commands + trimmed output) · Numbers changed (before → after + command) · Risks · Not done / follow-ups · Plan link (`.cursor/plans/...`) · Agent run link if any.
 - Run `.cursor/skills/verify-receipts/SKILL.md` before opening a PR that touches numbers, tests, or scorers.
 - Attach artifacts for anything visual or behavioral (screenshot, short video, eval table).
-- Never force-push shared branches, rewrite history, tag, or publish. A human merges. The shell guard blocks `git pull --rebase` because the deny rule matches `rebase`.
+- Never force-push shared branches, rewrite history, tag, or publish. A human merges. The shell guard's matcher includes `git pull`, and its deny rule matches `rebase`, so `git pull --rebase` is blocked.
 - Address every Bugbot finding: fix it or reply with a reason. Don't silently resolve.

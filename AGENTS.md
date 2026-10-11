@@ -47,7 +47,7 @@ A task is not done until the pytest command and the three `--check` commands pas
 
 ## Shell guard
 
-`.cursor/hooks/guard-shell.sh` runs before shell commands that look like git push, reset, rebase, tag, publish, curl, wget, or `rm -rf`. It fails closed. The deny rule matches the substring `rebase`, so it blocks `git rebase` and **`git pull --rebase`**. It also blocks force-push, `reset --hard`, tags, and publishing. `git push` and network fetches ask first. Do not loosen the hook to get a command through.
+`.cursor/hooks/guard-shell.sh` runs before shell commands matching `git push`, `git reset`, `git rebase`, `git pull`, `git tag`, publish, curl, wget, or `rm -rf`. It fails closed. The matcher includes `git pull`, and the deny rule matches the substring `rebase`, so **`git pull --rebase`** is blocked along with `git rebase`. A payload with no command string is denied. It also blocks force-push, `reset --hard`, tags, and publishing. `git push` and network fetches ask first. Plain `git pull` is allowed. Do not loosen the hook to get a command through.
 
 ## Code style
 
