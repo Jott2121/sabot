@@ -1,0 +1,15 @@
+---
+description: Testing rules — applies when editing sabot tests or pytest config
+globs: "tests/**,**/test_*.py,**/*_test.py,pyproject.toml,pytest.ini,setup.cfg"
+alwaysApply: false
+---
+# Tests
+
+- Write the failing test first, show it failing, then make it pass. Paste both runs in the PR.
+- Test behavior, not implementation. Exercise the real entry point (the scorer CLI, `validate_submission.py`, or the public function), not a private helper.
+- Every guard or gate gets a deny-path test: error, timeout, malformed input, empty input.
+- Never add `skip`, `xfail`, or loosen assertions to get green. Never lower `--cov-fail-under` (90) or edit a scorer `EXPECTED` table to match a new output.
+- Tests must run offline with no API keys. `judge_live` is marked and deselected by `addopts` in `harness/pyproject.toml`. Leave that deselection in place.
+- CI ignores `tests/test_venvs.py` because it needs the three pinned framework venvs. Do not delete that test and do not drop the ignore to force a green run without the venvs.
+- Adapter suites skip themselves with `pytest.importorskip` when the framework is absent. That skip is expected offline.
+- No network, no wall-clock sleeps, no order dependence. Use fixtures with fixed seeds.

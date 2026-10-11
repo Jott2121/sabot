@@ -100,3 +100,51 @@ jobs:
             echo "::notice::submissions/ holds only TEMPLATE — no third-party rows to validate."
           fi
           exit $status
+
+  receipts:
+    # Same mechanism as the scorer job: the three --check scripts recompute
+    # published numbers and compare them byte-for-byte to the frozen baselines.
+    # No separate check_receipts.py. The scorer job remains the 3.9–3.13 matrix.
+    # This job names the receipt gate on one interpreter. Stdlib only; no pip.
+    name: Receipts (published numbers)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.11"
+      - name: Byte-for-byte --check of the published numbers
+        run: |
+          python scripts/score_strict.py --check
+          python scripts/score_uncertainty.py --check
+          python scripts/score_by_operator.py --check
+
+  no-employer-data:
+    # Author byline (README "## Author", papers/*.md, CITATION.cff) names Jeff
+    # Otterson and does not name an employer, so those files stay in the scan.
+    # Excluding README.md would hide a real hit in the results. Policy files
+    # that must name the prohibited employer in order to forbid it are excluded.
+    name: No employer data
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Block employer / export-control markers and committed build junk
+        run: |
+          set +e
+          git grep -nIiE 'lockheed|\blmco\b|\bCUI\b|ITAR|EXPORT CONTROLLED|PROPRIETARY' -- . ':!.cursor' ':!AGENTS.md' ':!.github'
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ]; then
+            echo "employer or export-control marker found"
+            exit 1
+          elif [ "$status" -ne 1 ]; then
+            echo "git grep failed (exit $status)"
+            exit 1
+          fi
+          if git ls-files | grep -E '(__pycache__/|\.pyc$|^\.coverage$)'; then
+            echo "committed build junk found"
+            exit 1
+          fi

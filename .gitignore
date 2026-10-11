@@ -6,3 +6,4 @@ results/
 traces/
 *.env
 .superpowers/
+.cursor/hook-logs/
